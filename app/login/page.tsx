@@ -3,7 +3,7 @@
 import { usePrivy } from "@privy-io/react-auth";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
-import ConnectButton from "@/components/ConnectButton";
+import ConnectButton from "../../components/ConnectButton";
 
 export default function LoginPage() {
   const { ready, authenticated } = usePrivy();
