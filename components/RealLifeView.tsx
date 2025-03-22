@@ -1,6 +1,6 @@
 "use client";
 
-import React from 'react';
+import React, { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ExternalLink, MapPin } from 'lucide-react';
@@ -9,11 +9,12 @@ import { ExternalLink, MapPin } from 'lucide-react';
 const locations = [
   {
     id: 1,
-    name: "Devconnect Argentina HQ",
-    address: "Av. del Libertador 101, Buenos Aires, Argentina",
+    name: "Aleph Hub",
+    address: "Concepción Arenal 2989, C1426DGG, Cdad. Autónoma de Buenos Aires",
     description: "Main gathering point for Web3 enthusiasts in Buenos Aires. Features coworking spaces, event areas, and networking lounges.",
-    image: "/boys-nft-collection/image.webp",
-    googleMapsUrl: "https://maps.google.com/?q=-34.5833,-58.3817",
+    image: "/locations/aleph-hub-location.webp",
+    qrCodeImage: "/locations/aleph-hub-8code.png",
+    googleMapsUrl: "https://www.google.com/maps/place/Aleph+Hub/data=!4m2!3m1!1s0x0:0x3a22d7994f3ff7ec?sa=X&ved=1t:2428&ictx=111",
     tags: ["Coworking", "Events", "Cafe"]
   },
   {
@@ -55,6 +56,12 @@ const locations = [
 ];
 
 export default function RealLifeView() {
+  const [flippedCard, setFlippedCard] = useState<number | null>(null);
+
+  const handleCardFlip = (locationId: number) => {
+    setFlippedCard(flippedCard === locationId ? null : locationId);
+  };
+
   return (
     <section className="h-screen bg-black text-white relative overflow-hidden">
       <div className="absolute inset-0 w-full h-full">
@@ -103,16 +110,33 @@ export default function RealLifeView() {
                 {locations.map((location) => (
                   <div 
                     key={location.id} 
-                    className="flex bg-black/30 rounded-lg overflow-hidden border border-white/10 hover:border-white/30 transition-all duration-300 hover:shadow-lg"
+                    className={`flex bg-black/30 rounded-lg overflow-hidden border border-white/10 hover:border-white/30 transition-all duration-300 hover:shadow-lg ${location.id === 1 ? 'cursor-pointer' : ''}`}
+                    onClick={location.id === 1 ? () => handleCardFlip(location.id) : undefined}
                   >
-                    {/* Location image */}
-                    <div className="w-1/3 relative h-[140px]">
-                      <Image
-                        src={location.image}
-                        alt={location.name}
-                        fill
-                        className="object-cover"
-                      />
+                    {/* Location image or QR code for Aleph Hub */}
+                    <div className={`w-1/3 relative h-[140px] ${location.id === 1 ? 'flip-card-container' : ''}`}>
+                      <div className={`flip-card ${flippedCard === location.id ? 'flipped' : ''} h-full w-full relative`}>
+                        <div className="flip-card-front absolute inset-0">
+                          <Image
+                            src={location.image}
+                            alt={location.name}
+                            fill
+                            className="object-cover"
+                          />
+                        </div>
+                        {location.id === 1 && (
+                          <div className="flip-card-back absolute inset-0 bg-white flex items-center justify-center">
+                            {location.qrCodeImage && (
+                              <Image
+                                src={location.qrCodeImage}
+                                alt={`${location.name} QR Code`}
+                                fill
+                                className="object-contain p-2"
+                              />
+                            )}
+                          </div>
+                        )}
+                      </div>
                     </div>
                     
                     {/* Location details */}
@@ -143,6 +167,9 @@ export default function RealLifeView() {
                           target="_blank"
                           rel="noopener noreferrer"
                           className="text-white/70 hover:text-white flex items-center text-xs transition-colors"
+                          onClick={(e) => {
+                            if (location.id === 1) e.stopPropagation();
+                          }}
                         >
                           <span className="mr-1">Maps</span>
                           <ExternalLink size={12} />
@@ -157,7 +184,7 @@ export default function RealLifeView() {
         </div>
       </div>
       
-      {/* Custom scrollbar styles */}
+      {/* Custom scrollbar and card flip styles */}
       <style jsx global>{`
         .location-scrollbar::-webkit-scrollbar {
           width: 6px;
@@ -175,6 +202,24 @@ export default function RealLifeView() {
         
         .location-scrollbar::-webkit-scrollbar-thumb:hover {
           background: rgba(255, 255, 255, 0.3);
+        }
+
+        .flip-card {
+          transition: transform 0.6s;
+          transform-style: preserve-3d;
+        }
+        
+        .flip-card.flipped {
+          transform: rotateY(180deg);
+        }
+        
+        .flip-card-front,
+        .flip-card-back {
+          backface-visibility: hidden;
+        }
+        
+        .flip-card-back {
+          transform: rotateY(180deg);
         }
       `}</style>
     </section>
