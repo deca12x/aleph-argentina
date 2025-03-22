@@ -99,11 +99,12 @@ export default function Scene() {
       camera={{ position: [0, 0, 10] }}
       style={{
         background: "#1e293b",
-        position: "fixed",
+        position: "absolute",
         top: 0,
         left: 0,
-        width: "100vw",
-        height: "100vh",
+        width: "100%",
+        height: "100%",
+        zIndex: 1,
       }}
     >
       <ambientLight intensity={1} />
