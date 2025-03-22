@@ -66,7 +66,7 @@ export default function RealLifeView() {
     <section className="h-screen bg-black text-white relative overflow-hidden">
       <div className="absolute inset-0 w-full h-full">
         <Image
-          src="/boys-nft-collection/image.webp"
+          src="/mantle1.webp"
           alt="Real Life View"
           fill
           className="object-cover opacity-30"
@@ -85,14 +85,26 @@ export default function RealLifeView() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 overflow-hidden flex-grow">
           {/* Welcome to Reality card */}
-          <div className="p-8 bg-black/50 backdrop-blur-lg rounded-xl border border-white/10 flex flex-col justify-center h-full">
-            <h3 className="text-2xl font-bold mb-4 font-greed">Welcome to Reality</h3>
-            <p className="text-gray-300 mb-4 font-greed">
-              In this view, you're seeing things as they truly are. No illusions, no digital constructs - just pure reality.
-            </p>
-            <p className="text-gray-300 font-greed">
-              Connect with other real beings and experience the authentic world around you. The choices you make here have real consequences.
-            </p>
+          <div className="p-8 bg-black/50 backdrop-blur-lg rounded-xl border border-white/10 flex flex-col justify-center h-full relative overflow-hidden">
+            {/* Background image for the card */}
+            <div className="absolute inset-0 w-full h-full z-0">
+              <Image
+                src="/mantle2.webp"
+                alt="Mantle background"
+                fill
+                className="object-cover opacity-10"
+                sizes="100vw"
+              />
+            </div>
+            <div className="relative z-10">
+              <h3 className="text-2xl font-bold mb-4 font-greed">Welcome to Reality</h3>
+              <p className="text-gray-300 mb-4 font-greed">
+                In this view, you're seeing things as they truly are. No illusions, no digital constructs - just pure reality.
+              </p>
+              <p className="text-gray-300 font-greed">
+                Connect with other real beings and experience the authentic world around you. The choices you make here have real consequences.
+              </p>
+            </div>
           </div>
 
           {/* Locations card */}
