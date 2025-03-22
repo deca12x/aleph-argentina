@@ -18,6 +18,15 @@ export default function Home() {
     }
   }, [ready, authenticated, router]);
 
+  // Add home-page class to body when on homepage
+  useEffect(() => {
+    document.body.classList.add('home-page');
+    
+    return () => {
+      document.body.classList.remove('home-page');
+    };
+  }, []);
+
   if (!ready) {
     return (
       <div className="h-screen w-screen flex items-center justify-center bg-black">

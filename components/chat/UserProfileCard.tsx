@@ -2,7 +2,7 @@
 
 import type React from "react"
 import { useState, useEffect, useRef } from "react"
-import { Send } from "lucide-react"
+import { Send, X } from "lucide-react"
 import { usePrivy } from "@privy-io/react-auth"
 import { useChat } from "@/context/ChatContext"
 import { usePathname } from "next/navigation"
@@ -11,6 +11,7 @@ import Image from "next/image"
 export default function UserProfileCard() {
   const [message, setMessage] = useState("")
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
+  const [showPoapMessage, setShowPoapMessage] = useState(false)
   const cardRef = useRef<HTMLDivElement>(null)
   const { user } = usePrivy()
   const { sendMessage } = useChat()
@@ -18,6 +19,8 @@ export default function UserProfileCard() {
   
   // Check if we're in a clan space (to show chat input)
   const isInClanSpace = pathname?.includes('/clans/')
+  // Check if we're in Mantle space specifically
+  const isInMantleSpace = pathname?.includes('/Mantle')
   
   // Get wallet address from Privy
   const walletAddress = user?.wallet?.address
@@ -47,6 +50,12 @@ export default function UserProfileCard() {
     }
   }
 
+  const handleProfileClick = () => {
+    if (isInMantleSpace) {
+      setShowPoapMessage(true)
+    }
+  }
+
   return (
     <div
       id="chatWindow"
@@ -57,13 +66,36 @@ export default function UserProfileCard() {
         zIndex: 9999
       }}
     >
+      {/* POAP Message Modal */}
+      {showPoapMessage && (
+        <div className="absolute left-0 -top-[140px] w-full p-4 rounded-[15px] backdrop-blur-[12px] border border-white/20 shadow-lg bg-black/60 z-50 text-white">
+          <div className="flex justify-between items-start">
+            <h3 className="text-lg font-bold mb-2">Mantle Space</h3>
+            <button 
+              onClick={() => setShowPoapMessage(false)}
+              className="text-white/70 hover:text-white transition-colors"
+            >
+              <X size={20} />
+            </button>
+          </div>
+          <p className="text-sm text-white/80 mb-2">
+            Only users holding Mantle POAPs can speak in this space. Collect a POAP at a Mantle event to unlock chat privileges.
+          </p>
+          <div className="flex gap-2 mt-3">
+            <div className="flex-1 h-1 bg-purple-500/30 rounded-full"></div>
+            <div className="flex-1 h-1 bg-blue-500/30 rounded-full"></div>
+          </div>
+        </div>
+      )}
+      
       {/* Profile picture floating to the left */}
       <div 
-        className="absolute -left-16 md:-left-20 bottom-2 w-12 h-12 md:w-16 md:h-16 rounded-full border-2 border-white/30 overflow-hidden shadow-lg"
+        className="absolute -left-16 md:-left-20 bottom-2 w-12 h-12 md:w-16 md:h-16 rounded-full border-2 border-white/30 overflow-hidden shadow-lg cursor-pointer hover:border-white/50 transition-all duration-300"
         style={{
           transform: `translateY(${mousePosition.y / 80}px)`,
           boxShadow: '0 0 15px rgba(255, 255, 255, 0.2), inset 0 0 8px rgba(255, 255, 255, 0.1)'
         }}
+        onClick={handleProfileClick}
       >
         <div className="absolute inset-0 bg-gradient-to-tr from-blue-500/20 to-purple-500/20 mix-blend-overlay"></div>
         <Image

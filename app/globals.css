@@ -101,11 +101,32 @@ select {
   backdrop-filter: blur(8px);
   z-index: 9998;
   pointer-events: none;
-  animation: fadeInOut 0.5s ease-in-out;
+  animation: fadeOut 0.5s ease-in-out;
+  will-change: opacity;
 }
 
-@keyframes fadeInOut {
+/* Add class for the entered page to ensure fade-in works */
+.page-entered {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+/* Override for homepage to ensure no blur */
+body.home-page .page-transitioning::after {
+  animation: quickFadeOut 0.3s ease-in-out forwards;
+}
+
+@keyframes fadeOut {
   0% { opacity: 0; }
   50% { opacity: 1; }
   100% { opacity: 0; }
+}
+
+@keyframes quickFadeOut {
+  0% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+@keyframes fadeIn {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
 }

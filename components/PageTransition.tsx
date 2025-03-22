@@ -8,13 +8,52 @@ export default function PageTransition() {
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [prevPath, setPrevPath] = useState('');
 
+  // Clear any lingering classes when the component mounts or pathname changes
+  useEffect(() => {
+    // Give a small delay to ensure proper DOM updates
+    const clearTimer = setTimeout(() => {
+      // If we're on the homepage, ensure all transition classes are cleared
+      if (pathname === '/') {
+        document.body.classList.remove('page-transitioning');
+        document.body.classList.remove('page-entered');
+        // Add back page-entered with a slight delay for a smooth fade-in
+        setTimeout(() => {
+          document.body.classList.add('page-entered');
+        }, 10);
+      }
+    }, 50);
+    
+    return () => {
+      clearTimeout(clearTimer);
+    };
+  }, [pathname]);
+
+  useEffect(() => {
+    // Remove any existing page-entered class when component mounts
+    document.body.classList.remove('page-entered');
+    
+    // Add page-entered class after component mounts to trigger fade-in
+    const pageEnteredTimer = setTimeout(() => {
+      document.body.classList.add('page-entered');
+    }, 10);
+    
+    return () => {
+      clearTimeout(pageEnteredTimer);
+      document.body.classList.remove('page-entered');
+    };
+  }, []);
+
   useEffect(() => {
     // Only trigger transition when pathname actually changes
     if (prevPath && prevPath !== pathname) {
+      // Add transitioning class to trigger fade-out
+      document.body.classList.add('page-transitioning');
       setIsTransitioning(true);
       
-      // Hide after a short duration
+      // Remove transitioning class and add entered class after transition completes
       const timer = setTimeout(() => {
+        document.body.classList.remove('page-transitioning');
+        document.body.classList.add('page-entered');
         setIsTransitioning(false);
       }, 500);
       

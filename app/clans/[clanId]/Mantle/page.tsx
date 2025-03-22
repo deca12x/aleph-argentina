@@ -189,9 +189,13 @@ export default function MantleClanPage() {
   const handleBackClick = () => {
     // Add transition effect
     document.body.classList.add('page-transitioning');
+    
+    // Set timeout to navigate after transition effect starts
     setTimeout(() => {
-      toggleDemo(false);
+      // Remove transitioning class before navigation
       document.body.classList.remove('page-transitioning');
+      // Navigate to homepage
+      router.push('/');
     }, 500);
   };
 
