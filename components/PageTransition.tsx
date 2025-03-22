@@ -1,22 +1,36 @@
 "use client"
 
-import { motion } from "framer-motion"
-import { ReactNode } from "react"
+import { useState, useEffect } from 'react';
+import { usePathname } from 'next/navigation';
 
-interface PageTransitionProps {
-  children: ReactNode
-}
+export default function PageTransition() {
+  const pathname = usePathname();
+  const [isTransitioning, setIsTransitioning] = useState(false);
+  const [prevPath, setPrevPath] = useState('');
 
-export default function PageTransition({ children }: PageTransitionProps) {
+  useEffect(() => {
+    // Only trigger transition when pathname actually changes
+    if (prevPath && prevPath !== pathname) {
+      setIsTransitioning(true);
+      
+      // Hide after a short duration
+      const timer = setTimeout(() => {
+        setIsTransitioning(false);
+      }, 500);
+      
+      return () => clearTimeout(timer);
+    }
+    
+    // Update prevPath for next comparison
+    setPrevPath(pathname);
+  }, [pathname, prevPath]);
+
   return (
-    <motion.div
-      initial={{ opacity: 0, filter: "blur(5px)" }}
-      animate={{ opacity: 1, filter: "blur(0px)" }}
-      exit={{ opacity: 0, filter: "blur(5px)" }}
-      transition={{ duration: 0.5, ease: "easeInOut" }}
-      className="w-full h-full"
-    >
-      {children}
-    </motion.div>
-  )
+    <div
+      className={`fixed inset-0 bg-black/30 backdrop-blur-sm z-[9999] pointer-events-none transition-opacity duration-300 ease-in-out ${
+        isTransitioning ? 'opacity-100' : 'opacity-0'
+      }`}
+      aria-hidden="true"
+    />
+  );
 } 

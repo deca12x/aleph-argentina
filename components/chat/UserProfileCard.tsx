@@ -6,6 +6,7 @@ import { Send } from "lucide-react"
 import { usePrivy } from "@privy-io/react-auth"
 import { useChat } from "@/context/ChatContext"
 import { usePathname } from "next/navigation"
+import Image from "next/image"
 
 export default function UserProfileCard() {
   const [message, setMessage] = useState("")
@@ -56,6 +57,23 @@ export default function UserProfileCard() {
         zIndex: 9999
       }}
     >
+      {/* Profile picture floating to the left */}
+      <div 
+        className="absolute -left-16 md:-left-20 bottom-2 w-12 h-12 md:w-16 md:h-16 rounded-full border-2 border-white/30 overflow-hidden shadow-lg"
+        style={{
+          transform: `translateY(${mousePosition.y / 80}px)`,
+          boxShadow: '0 0 15px rgba(255, 255, 255, 0.2), inset 0 0 8px rgba(255, 255, 255, 0.1)'
+        }}
+      >
+        <div className="absolute inset-0 bg-gradient-to-tr from-blue-500/20 to-purple-500/20 mix-blend-overlay"></div>
+        <Image
+          src="/boys-nft-collection/image.webp"
+          alt="Profile"
+          fill
+          className="object-cover"
+        />
+      </div>
+      
       {/* Glass card - modern clean glassmorphism */}
       <div className="relative h-auto w-full rounded-[20px] overflow-hidden backdrop-blur-[12px] border border-white/20 shadow-lg bg-black/20">
         {/* Input area - only show in clan spaces */}

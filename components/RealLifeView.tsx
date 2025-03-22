@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { ExternalLink, MapPin } from 'lucide-react';
+import { ExternalLink, MapPin, X, Gift, QrCode } from 'lucide-react';
 
 // Location data
 const locations = [
@@ -15,7 +15,12 @@ const locations = [
     image: "/locations/aleph-hub-location.webp",
     qrCodeImage: "/locations/aleph-hub-8code.png",
     googleMapsUrl: "https://www.google.com/maps/place/Aleph+Hub/data=!4m2!3m1!1s0x0:0x3a22d7994f3ff7ec?sa=X&ved=1t:2428&ictx=111",
-    tags: ["Coworking", "Events", "Cafe"]
+    tags: ["Coworking", "Events", "Cafe"],
+    specialFeature: {
+      title: "3D IRL NFT Wall Experience",
+      description: "Discover the revolutionary 3D NFT Wall at Aleph Hub powered by Mantle! Interact with physical digital art and scan QR codes to unlock exclusive rewards, limited NFT drops, and special access to future Mantle events. Be among the first to experience this groundbreaking fusion of physical and digital art!",
+      cta: "Visit Aleph Hub to claim your rewards"
+    }
   },
   {
     id: 2,
@@ -56,10 +61,24 @@ const locations = [
 ];
 
 export default function RealLifeView() {
-  const [flippedCard, setFlippedCard] = useState<number | null>(null);
+  const [activeLocation, setActiveLocation] = useState<number | null>(null);
 
-  const handleCardFlip = (locationId: number) => {
-    setFlippedCard(flippedCard === locationId ? null : locationId);
+  const handleLocationClick = (locationId: number) => {
+    // Add transition effect
+    document.body.classList.add('page-transitioning');
+    setTimeout(() => {
+      setActiveLocation(locationId);
+      document.body.classList.remove('page-transitioning');
+    }, 300);
+  };
+
+  const closeLocationDetail = () => {
+    // Add transition effect
+    document.body.classList.add('page-transitioning');
+    setTimeout(() => {
+      setActiveLocation(null);
+      document.body.classList.remove('page-transitioning');
+    }, 300);
   };
 
   return (
@@ -123,32 +142,23 @@ export default function RealLifeView() {
                   <div 
                     key={location.id} 
                     className={`flex bg-black/30 rounded-lg overflow-hidden border border-white/10 hover:border-white/30 transition-all duration-300 hover:shadow-lg ${location.id === 1 ? 'cursor-pointer' : ''}`}
-                    onClick={location.id === 1 ? () => handleCardFlip(location.id) : undefined}
+                    onClick={location.id === 1 ? () => handleLocationClick(location.id) : undefined}
                   >
-                    {/* Location image or QR code for Aleph Hub */}
-                    <div className={`w-1/3 relative h-[140px] ${location.id === 1 ? 'flip-card-container' : ''}`}>
-                      <div className={`flip-card ${flippedCard === location.id ? 'flipped' : ''} h-full w-full relative`}>
-                        <div className="flip-card-front absolute inset-0">
-                          <Image
-                            src={location.image}
-                            alt={location.name}
-                            fill
-                            className="object-cover"
-                          />
-                        </div>
-                        {location.id === 1 && (
-                          <div className="flip-card-back absolute inset-0 bg-white flex items-center justify-center">
-                            {location.qrCodeImage && (
-                              <Image
-                                src={location.qrCodeImage}
-                                alt={`${location.name} QR Code`}
-                                fill
-                                className="object-contain p-2"
-                              />
-                            )}
+                    {/* Location image */}
+                    <div className="w-1/3 relative h-[140px]">
+                      <Image
+                        src={location.image}
+                        alt={location.name}
+                        fill
+                        className="object-cover"
+                      />
+                      {location.id === 1 && (
+                        <div className="absolute inset-0 bg-gradient-to-tr from-purple-500/40 to-blue-500/40 flex items-center justify-center">
+                          <div className="bg-white/20 backdrop-blur-sm rounded-full p-2 animate-pulse">
+                            <QrCode size={20} className="text-white" />
                           </div>
-                        )}
-                      </div>
+                        </div>
+                      )}
                     </div>
                     
                     {/* Location details */}
@@ -196,7 +206,51 @@ export default function RealLifeView() {
         </div>
       </div>
       
-      {/* Custom scrollbar and card flip styles */}
+      {/* Special Feature Modal for selected location */}
+      {activeLocation && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/80 backdrop-blur-lg" onClick={closeLocationDetail}></div>
+          
+          <div className="relative bg-gradient-to-br from-purple-900/90 to-blue-900/90 backdrop-blur-xl rounded-2xl border border-white/20 max-w-lg w-full overflow-hidden animate-fadeIn">
+            <button 
+              onClick={closeLocationDetail}
+              className="absolute top-4 right-4 text-white/70 hover:text-white"
+            >
+              <X size={20} />
+            </button>
+            
+            <div className="p-8">
+              <div className="flex items-center justify-center mb-6">
+                <div className="w-16 h-16 rounded-full bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center">
+                  <Gift size={32} className="text-white" />
+                </div>
+              </div>
+              
+              <h3 className="text-2xl font-bold text-center mb-4 font-greed text-white">
+                {locations.find(loc => loc.id === activeLocation)?.specialFeature?.title}
+              </h3>
+              
+              <p className="text-gray-200 mb-6 text-center">
+                {locations.find(loc => loc.id === activeLocation)?.specialFeature?.description}
+              </p>
+              
+              <div className="flex justify-center">
+                <Link 
+                  href={locations.find(loc => loc.id === activeLocation)?.googleMapsUrl || '#'}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-6 py-3 bg-gradient-to-r from-purple-500 to-blue-500 rounded-full text-white font-bold hover:from-purple-600 hover:to-blue-600 transition-all duration-300 shadow-lg hover:shadow-xl font-greed flex items-center gap-2"
+                >
+                  <QrCode size={18} />
+                  <span>{locations.find(loc => loc.id === activeLocation)?.specialFeature?.cta}</span>
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      
+      {/* Custom scrollbar styles */}
       <style jsx global>{`
         .location-scrollbar::-webkit-scrollbar {
           width: 6px;
@@ -216,22 +270,13 @@ export default function RealLifeView() {
           background: rgba(255, 255, 255, 0.3);
         }
 
-        .flip-card {
-          transition: transform 0.6s;
-          transform-style: preserve-3d;
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(10px); }
+          to { opacity: 1; transform: translateY(0); }
         }
         
-        .flip-card.flipped {
-          transform: rotateY(180deg);
-        }
-        
-        .flip-card-front,
-        .flip-card-back {
-          backface-visibility: hidden;
-        }
-        
-        .flip-card-back {
-          transform: rotateY(180deg);
+        .animate-fadeIn {
+          animation: fadeIn 0.3s ease-out forwards;
         }
       `}</style>
     </section>

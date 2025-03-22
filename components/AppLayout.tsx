@@ -3,7 +3,6 @@
 import { usePrivy } from "@privy-io/react-auth";
 import UserProfileCard from "@/components/chat/UserProfileCard";
 import LogoutButton from "@/components/LogoutButton";
-import PageTransition from "@/components/PageTransition";
 import { ReactNode, useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 
@@ -33,9 +32,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
 
   return (
     <>
-      <PageTransition>
-        {children}
-      </PageTransition>
+      {children}
       
       {authenticated && (
         <>

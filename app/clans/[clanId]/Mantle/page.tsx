@@ -165,9 +165,34 @@ export default function MantleClanPage() {
 
   // Handle Enter Space button click
   const handleEnterSpace = () => {
-    connectWalletAndSwitchNetwork();
-    // This will be called after wallet connection, but also trigger here just in case
-    toggleDemo(true);
+    // Add transition effect
+    document.body.classList.add('page-transitioning');
+    setTimeout(() => {
+      connectWalletAndSwitchNetwork();
+      // This will be called after wallet connection, but also trigger here just in case
+      toggleDemo(true);
+      document.body.classList.remove('page-transitioning');
+    }, 500);
+  };
+
+  // Toggle between Matrix and RealLife views
+  const toggleDemoView = (view: 'matrix' | 'reallife') => {
+    // Add transition effect
+    document.body.classList.add('page-transitioning');
+    setTimeout(() => {
+      setActiveDemo(view);
+      document.body.classList.remove('page-transitioning');
+    }, 500);
+  };
+
+  // Handle back button click
+  const handleBackClick = () => {
+    // Add transition effect
+    document.body.classList.add('page-transitioning');
+    setTimeout(() => {
+      toggleDemo(false);
+      document.body.classList.remove('page-transitioning');
+    }, 500);
   };
 
   if (!ready) {
@@ -184,6 +209,24 @@ export default function MantleClanPage() {
 
   return (
     <main className="min-h-screen bg-black cursor-ethereum">
+      {/* Mantle logo button - always visible */}
+      <a 
+        href="https://mantle.xyz/" 
+        target="_blank" 
+        rel="noopener noreferrer" 
+        className="fixed top-8 right-4 md:top-22 md:right-10 z-50 w-12 h-12 md:w-16 md:h-16 rounded-full bg-black/50 backdrop-blur-md border border-white/20 flex items-center justify-center hover:border-white/40 transition-all duration-300 shadow-lg hover:scale-105"
+        title="Visit Mantle Website"
+      >
+        <div className="relative w-8 h-8 md:w-10 md:h-10">
+          <Image 
+            src="/icons/mantle-mnt-logo (1).png" 
+            alt="Mantle Logo" 
+            fill 
+            className="object-contain"
+          />
+        </div>
+      </a>
+
       {!showDemo ? (
         <div className="container mx-auto px-4 py-16">
           {/* Return to home navigation */}
@@ -248,55 +291,37 @@ export default function MantleClanPage() {
           </div>
         </div>
       ) : (
-        <div className="relative h-screen w-screen overflow-hidden">
-          {/* Back to Home button */}
-          <div className="absolute top-0 left-0 z-50 p-6">
+        <div className="h-screen relative overflow-hidden">
+          {/* Back button */}
+          <button
+            onClick={handleBackClick}
+            className="absolute top-4 left-4 md:top-6 md:left-6 z-50 px-4 py-2 bg-black/50 backdrop-blur-md text-white rounded-full flex items-center gap-2 hover:bg-black/70 transition-all"
+          >
+            <span>← Back to BA</span>
+          </button>
+
+          {/* View toggle buttons */}
+          <div className="absolute top-4 right-4 md:top-6 md:right-6 z-50 bg-black/50 backdrop-blur-md rounded-full flex overflow-hidden">
             <button
-              onClick={() => {
-                // Navigate directly to home instead of toggling back to the entry screen
-                router.push('/');
-              }}
-              className="flex items-center gap-2 text-white/70 hover:text-white transition-colors duration-200"
+              onClick={() => toggleDemoView('matrix')}
+              className={`px-4 py-2 text-sm ${
+                activeDemo === 'matrix' ? 'bg-white/20 text-white' : 'text-white/70'
+              } transition-all`}
             >
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="m15 18-6-6 6-6"/>
-              </svg>
-              <span>Back to BA.</span>
+              Matrix
+            </button>
+            <button
+              onClick={() => toggleDemoView('reallife')}
+              className={`px-4 py-2 text-sm ${
+                activeDemo === 'reallife' ? 'bg-white/20 text-white' : 'text-white/70'
+              } transition-all`}
+            >
+              Real Life
             </button>
           </div>
 
-          {/* Matrix/Real Life toggle */}
-          <div className="absolute top-0 right-0 z-50 p-6">
-            <div className="flex items-center gap-4 bg-black/50 backdrop-blur-sm p-2 rounded-full border border-white/10">
-              <button
-                onClick={() => setActiveDemo('matrix')}
-                className={`px-4 py-2 rounded-full text-sm transition-colors duration-200 font-greed ${
-                  activeDemo === 'matrix' 
-                    ? 'bg-white/10 text-white' 
-                    : 'hover:bg-white/5 text-white/70'
-                }`}
-              >
-                Matrix
-              </button>
-              <button
-                onClick={() => setActiveDemo('reallife')}
-                className={`px-4 py-2 rounded-full text-sm transition-colors duration-200 font-greed ${
-                  activeDemo === 'reallife' 
-                    ? 'bg-white/10 text-white' 
-                    : 'hover:bg-white/5 text-white/70'
-                }`}
-              >
-                Real Life
-              </button>
-            </div>
-          </div>
-
-          {/* Display appropriate view based on activeDemo */}
-          {activeDemo === 'matrix' ? (
-            <MatrixView />
-          ) : (
-            <RealLifeView />
-          )}
+          {/* Display active demo view */}
+          {activeDemo === 'matrix' ? <MatrixView /> : <RealLifeView />}
           
           {/* Only show chat messages when demo is shown */}
           <ChatMessages />
