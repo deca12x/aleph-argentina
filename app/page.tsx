@@ -4,7 +4,7 @@ import { usePrivy } from "@privy-io/react-auth";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { Loader2 } from "lucide-react";
-import { clans } from "@/lib/data";
+import Canvas3D from "@/components/3d/Canvas";
 
 export default function Home() {
   const { ready, authenticated, logout } = usePrivy();
@@ -29,28 +29,26 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col gap-4 items-center justify-center">
-      <div className="text-2xl font-bold">Welcome to Buenos Aires</div>
-
-      {/* Clan buttons */}
-      <div className="flex flex-col gap-2">
-        {clans.map((clan) => (
-          <a
-            key={clan.id}
-            href={`/clans/${clan.id}`}
-            className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
-          >
-            {clan.name}
-          </a>
-        ))}
+    <main className="relative w-full h-screen overflow-hidden">
+      {/* 3D Canvas as main content */}
+      <div className="absolute inset-0">
+        <Canvas3D />
       </div>
 
-      <button
-        onClick={logout}
-        className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
-      >
-        Logout
-      </button>
-    </div>
+      {/* Minimal UI overlay */}
+      <div className="relative z-10 p-4">
+        <div className="flex justify-between items-center">
+          <h1 className="text-2xl font-bold text-white drop-shadow-lg">
+            Welcome to Buenos Aires
+          </h1>
+          <button
+            onClick={logout}
+            className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
+          >
+            Logout
+          </button>
+        </div>
+      </div>
+    </main>
   );
 }
