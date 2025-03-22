@@ -1,5 +1,6 @@
-import { useAccount, useReadContract } from "wagmi";
+import { useAccount, useReadContract, useChainId } from "wagmi";
 import { parseAbiItem } from "viem";
+import { mantleMainnet } from "@/components/providers";
 
 // NFT Collection Addresses
 export const NFT_ADDRESSES = {
@@ -14,17 +15,26 @@ const erc721Abi = [
 // Hook to check if user owns NFTs from a specific collection
 export const useNFTOwnership = (collectionAddress: `0x${string}`) => {
   const { address } = useAccount();
+  const chainId = useChainId();
 
-  const { data: balance, isLoading } = useReadContract({
+  const {
+    data: balance,
+    isLoading,
+    isError,
+  } = useReadContract({
     address: collectionAddress,
     abi: erc721Abi,
     functionName: "balanceOf",
     args: address ? [address] : undefined,
   });
 
+  const isWrongNetwork = chainId !== mantleMainnet.id;
+
   return {
     hasNFT: balance ? Number(balance) > 0 : false,
     isLoading,
+    isError,
+    isWrongNetwork,
   };
 };
 

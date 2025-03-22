@@ -7,7 +7,7 @@ import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { http } from "wagmi";
 import { defineChain } from "viem";
 
-const zksyncMainnet = defineChain({
+export const zksyncMainnet = defineChain({
   id: 324,
   name: "ZKSync Era Mainnet",
   network: "zksync-era",
@@ -17,7 +17,7 @@ const zksyncMainnet = defineChain({
   },
 });
 
-const zksyncTestnet = defineChain({
+export const zksyncTestnet = defineChain({
   id: 300,
   name: "ZKSync Sepolia Testnet",
   network: "zksync-sepolia",
@@ -27,7 +27,7 @@ const zksyncTestnet = defineChain({
   },
 });
 
-const mantleMainnet = defineChain({
+export const mantleMainnet = defineChain({
   id: 5000,
   name: "Mantle Mainnet",
   network: "mantle",
@@ -37,7 +37,7 @@ const mantleMainnet = defineChain({
   },
 });
 
-const mantleTestnet = defineChain({
+export const mantleTestnet = defineChain({
   id: 5003,
   name: "Mantle Sepolia Testnet",
   network: "mantle-sepolia",
