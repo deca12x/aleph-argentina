@@ -4,7 +4,7 @@ import { usePrivy } from "@privy-io/react-auth";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { Loader2 } from "lucide-react";
-import Canvas3D from "@/components/3d/Canvas";
+import Canvas3D, { SceneType } from "@/components/3d/Canvas";
 
 export default function Home() {
   const { ready, authenticated } = usePrivy();
@@ -28,5 +28,5 @@ export default function Home() {
     return null;
   }
 
-  return <Canvas3D />;
+  return <Canvas3D sceneType={SceneType.HOME} />;
 }
