@@ -6,7 +6,7 @@ import { useEffect } from "react";
 import { Loader2 } from "lucide-react";
 
 export default function Home() {
-  const { ready, authenticated } = usePrivy();
+  const { ready, authenticated, logout } = usePrivy();
   const router = useRouter();
 
   useEffect(() => {
@@ -28,8 +28,14 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center text-2xl font-bold">
-      Welcome to Buenos Aires
+    <div className="min-h-screen flex flex-col gap-4 items-center justify-center">
+      <div className="text-2xl font-bold">Welcome to Buenos Aires</div>
+      <button
+        onClick={logout}
+        className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
+      >
+        Logout
+      </button>
     </div>
   );
 }
