@@ -6,6 +6,7 @@ import { Suspense } from "react";
 export enum SceneType {
   HOME = "HOME",
   DEVCONNECT = "DEVCONNECT",
+  MANTLE = "MANTLE",
 }
 
 interface Canvas3DProps {
@@ -20,6 +21,8 @@ export default function Canvas3D({ sceneType }: Canvas3DProps) {
           return import("./TestScene");
         case SceneType.DEVCONNECT:
           return import("./DevconnectScene");
+        case SceneType.MANTLE:
+          return import("./TestScene"); // We'll use TestScene for now, can be replaced later
         default:
           return import("./TestScene"); // fallback to default scene
       }

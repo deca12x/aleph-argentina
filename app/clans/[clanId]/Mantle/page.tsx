@@ -5,10 +5,12 @@ import { usePrivy } from "@privy-io/react-auth";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { Loader2 } from "lucide-react";
-import Canvas3D, { SceneType } from "@/components/3d/Canvas";
-import UserProfileCard from "@/components/chat/UserProfileCard";
+import ChatMessages from "@/components/chat/ChatMessages";
+import NavButton from "@/components/NavButton";
+import Image from "next/image";
+import { MantleWidget, MantleIntegration } from "@/components/imported/mantle";
 
-export default function ClanAlphaPage() {
+export default function MantleClanPage() {
   const { ready, authenticated } = usePrivy();
   const router = useRouter();
 
@@ -20,7 +22,7 @@ export default function ClanAlphaPage() {
 
   if (!ready) {
     return (
-      <div className="h-screen w-screen flex items-center justify-center bg-[#1a1a1a]">
+      <div className="h-screen w-screen flex items-center justify-center bg-black">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     );
@@ -31,15 +33,41 @@ export default function ClanAlphaPage() {
   }
 
   return (
-    <div className="h-screen w-screen relative overflow-hidden bg-[#1a1a1a]">
-      {/* 3D Background */}
-      <div className="absolute inset-0" style={{ zIndex: 1 }}>
-        <Canvas3D sceneType={SceneType.CLAN_ALPHA} />
+    <div className="relative h-screen w-screen overflow-hidden">
+      {/* Background image with overlay */}
+      <div className="absolute inset-0 z-0">
+        <Image 
+          src="/devconnect-background.webp" 
+          alt="Devconnect Background" 
+          fill 
+          className="object-cover"
+          priority
+        />
+        <div className="absolute inset-0 bg-black/70"></div>
       </div>
       
-      {/* User Interface */}
-      <div className="fixed bottom-0 left-0 right-0 flex justify-center pb-8" style={{ zIndex: 50 }}>
-        <UserProfileCard />
+      {/* Content Container */}
+      <div className="relative z-[5] h-full w-full pt-20 pb-32 px-4 flex flex-col items-center overflow-y-auto">
+        {/* Mantle Widget */}
+        <div className="w-full max-w-4xl mb-8">
+          <MantleWidget />
+        </div>
+        
+        {/* Mantle Integration (External Project Content) */}
+        <div className="w-full max-w-4xl mb-8">
+          <MantleIntegration />
+        </div>
+      </div>
+      
+      {/* Chat Messages */}
+      <ChatMessages />
+      
+      {/* Return to home navigation */}
+      <NavButton href="/" label="Back to Home" position="top-left" />
+      
+      {/* Page Title */}
+      <div className="absolute top-6 left-1/2 transform -translate-x-1/2 text-white text-2xl font-bold z-10">
+        Mantle Clan
       </div>
     </div>
   );

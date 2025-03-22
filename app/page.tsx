@@ -6,6 +6,7 @@ import { useEffect } from "react";
 import { Loader2 } from "lucide-react";
 import Canvas3D, { SceneType } from "@/components/3d/Canvas";
 import Image from "next/image";
+import NavButton from "@/components/NavButton";
 
 export default function Home() {
   const { ready, authenticated } = usePrivy();
@@ -47,6 +48,14 @@ export default function Home() {
       {/* <div className="absolute inset-0 z-[2]">
         <Canvas3D sceneType={SceneType.HOME} />
       </div> */}
+      
+      {/* Navigation to Mantle Clan (Live Chat) */}
+      <NavButton href="/clans/mantle/Mantle" label="Go to Mantle Clan Chat" position="top-left" />
+      
+      {/* Page Title */}
+      <div className="absolute top-6 left-1/2 transform -translate-x-1/2 text-white text-2xl font-bold z-10">
+        Welcome to Aleph Argentina
+      </div>
       
       {/* UserProfileCard is now included in AppLayout */}
     </div>
