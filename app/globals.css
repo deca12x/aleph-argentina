@@ -27,5 +27,6 @@ body {
 
 /* Apply z-index for chat window to always appear on top */
 #chatWindow {
-  z-index: 1000;
+  z-index: 9999 !important;
+  pointer-events: auto !important;
 }

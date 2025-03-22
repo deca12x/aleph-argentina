@@ -10,7 +10,9 @@ export default function AppLayout({ children }: { children: ReactNode }) {
   return (
     <>
       {children}
-      {authenticated && <UserProfileCard />}
+      <div className="fixed inset-0 pointer-events-none" style={{ zIndex: 9000 }}>
+        {authenticated && <UserProfileCard />}
+      </div>
     </>
   );
 } 

@@ -4,6 +4,7 @@ import { usePrivy } from "@privy-io/react-auth";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import ConnectButton from "../../components/ConnectButton";
+import Image from "next/image";
 
 export default function LoginPage() {
   const { ready, authenticated } = usePrivy();
@@ -16,16 +17,23 @@ export default function LoginPage() {
   }, [ready, authenticated, router]);
 
   return (
-    <div className="min-h-screen w-screen flex items-center justify-center bg-black">
-      {/* Background gradient balls */}
-      <div className="absolute w-[300px] h-[300px] rounded-full bg-gradient-to-r from-[#0084ff] to-[#00ffff] blur-xl opacity-30 z-[-5]"
-           style={{ transform: 'translate(200px, -50px)' }} />
-      <div className="absolute w-[150px] h-[150px] rounded-full bg-gradient-to-r from-[#a200ff] to-[#000dff] blur-xl opacity-30 z-[-5]"
-           style={{ transform: 'translate(-160px, 100px)' }} />
-      <div className="absolute w-[240px] h-[240px] rounded-full bg-gradient-to-r from-[#00ffd9] to-[#00ff84] blur-xl opacity-30 z-[-5]"
-           style={{ transform: 'translate(-200px, -140px)' }} />
+    <div className="relative min-h-screen w-screen flex items-center justify-center overflow-hidden">
+      {/* Background image with overlay */}
+      <div className="absolute inset-0 z-0">
+        <Image 
+          src="/devconnect-background.webp" 
+          alt="Devconnect Background" 
+          fill 
+          className="object-cover blur-[2px]"
+          priority
+        />
+        <div className="absolute inset-0 bg-black/70"></div>
+      </div>
       
-      <ConnectButton />
+      {/* Connect button container */}
+      <div className="relative z-10">
+        <ConnectButton />
+      </div>
     </div>
   );
 }
