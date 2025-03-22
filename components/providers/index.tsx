@@ -10,7 +10,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
         appearance: {
           theme: "light",
           accentColor: "#676FFF",
-          logo: "/images/logo.svg",
+          logo: "/globe.svg",
         },
         loginMethods: ["email", "wallet"], // Add this line
       }}

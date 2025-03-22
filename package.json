@@ -13,7 +13,9 @@
     "lucide-react": "^0.483.0",
     "next": "15.2.3",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "viem": "^2.23.13",
+    "wagmi": "^2.14.15"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
