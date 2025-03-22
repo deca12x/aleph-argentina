@@ -6,4 +6,5 @@ export interface User {
 export interface Clan {
   id: string;
   name: string;
+  poapIds: string[];
 }
