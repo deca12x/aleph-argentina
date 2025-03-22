@@ -193,7 +193,7 @@ export default function MantleClanPage() {
             <h1 className="text-5xl md:text-7xl text-white font-bold mb-6 font-megazoid">
               Mantle Space
             </h1>
-            <p className="text-gray-400 max-w-2xl">
+            <p className="text-gray-400 max-w-2xl font-greed">
               Explore our curated NFT collections featuring exclusive digital artworks on the 
               Mantle blockchain.
             </p>
@@ -220,7 +220,7 @@ export default function MantleClanPage() {
                 <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent opacity-70"></div>
                 <div className={`absolute inset-0 opacity-0 ${collection.bgColor} group-hover:opacity-30 transition-opacity duration-300`}></div>
                 <div className="absolute bottom-0 left-0 p-6 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
-                  <h2 className="text-2xl font-bold text-white">{collection.title}</h2>
+                  <h2 className="text-2xl font-bold text-white font-greed">{collection.title}</h2>
                   <p className="text-gray-300 text-sm mb-4">{collection.subtitle}</p>
                   <span className="inline-block px-4 py-2 bg-white/10 rounded-full text-xs text-white font-medium">
                     Join Event
@@ -233,7 +233,7 @@ export default function MantleClanPage() {
           <div className="mt-24 text-center">
             <button 
               onClick={handleEnterSpace}
-              className="group inline-flex items-center px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-full text-white font-bold hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 shadow-lg hover:shadow-xl"
+              className="group inline-flex items-center px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-full text-white font-bold hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 shadow-lg hover:shadow-xl font-greed"
             >
               <span>Enter Space</span>
               <div className="ml-3 w-6 h-6 relative transform group-hover:translate-x-1 transition-transform duration-300">
@@ -250,10 +250,13 @@ export default function MantleClanPage() {
         </div>
       ) : (
         <div className="relative h-screen w-screen overflow-hidden">
-          {/* Back to BA button */}
+          {/* Back to Home button */}
           <div className="absolute top-0 left-0 z-50 p-6">
             <button
-              onClick={() => toggleDemo(false)}
+              onClick={() => {
+                // Navigate directly to home instead of toggling back to the entry screen
+                router.push('/');
+              }}
               className="flex items-center gap-2 text-white/70 hover:text-white transition-colors duration-200"
             >
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -268,7 +271,7 @@ export default function MantleClanPage() {
             <div className="flex items-center gap-4 bg-black/50 backdrop-blur-sm p-2 rounded-full border border-white/10">
               <button
                 onClick={() => setActiveDemo('matrix')}
-                className={`px-4 py-2 rounded-full text-sm transition-colors duration-200 ${
+                className={`px-4 py-2 rounded-full text-sm transition-colors duration-200 font-greed ${
                   activeDemo === 'matrix' 
                     ? 'bg-white/10 text-white' 
                     : 'hover:bg-white/5 text-white/70'
@@ -278,7 +281,7 @@ export default function MantleClanPage() {
               </button>
               <button
                 onClick={() => setActiveDemo('reallife')}
-                className={`px-4 py-2 rounded-full text-sm transition-colors duration-200 ${
+                className={`px-4 py-2 rounded-full text-sm transition-colors duration-200 font-greed ${
                   activeDemo === 'reallife' 
                     ? 'bg-white/10 text-white' 
                     : 'hover:bg-white/5 text-white/70'
