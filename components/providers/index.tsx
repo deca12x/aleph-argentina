@@ -1,6 +1,22 @@
 "use client";
 import * as React from "react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { PrivyProvider } from "@privy-io/react-auth";
+import { celo, mantle, sepolia } from "wagmi/chains";
+import { createConfig, WagmiProvider } from "wagmi";
+import { NuqsAdapter } from "nuqs/adapters/next/app";
+import { http } from "wagmi";
+
+const wagmiConfig = createConfig({
+  chains: [celo, mantle, sepolia],
+  transports: {
+    [sepolia.id]: http(),
+    [mantle.id]: http(),
+    [celo.id]: http(),
+  },
+});
+
+const queryClient = new QueryClient();
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
@@ -12,10 +28,14 @@ export function Providers({ children }: { children: React.ReactNode }) {
           accentColor: "#676FFF",
           logo: "/globe.svg",
         },
-        loginMethods: ["email", "wallet"], // Add this line
+        loginMethods: ["email", "wallet"],
       }}
     >
-      {children}
+      <QueryClientProvider client={queryClient}>
+        <WagmiProvider config={wagmiConfig}>
+          <NuqsAdapter>{children}</NuqsAdapter>
+        </WagmiProvider>
+      </QueryClientProvider>
     </PrivyProvider>
   );
 }
