@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { Loader2 } from "lucide-react";
 import Canvas3D, { SceneType } from "@/components/3d/Canvas";
-import UserProfileCard from "@/components/chat/UserProfileCard";
 
 export default function Home() {
   const { ready, authenticated } = usePrivy();
@@ -19,7 +18,7 @@ export default function Home() {
 
   if (!ready) {
     return (
-      <div className="h-screen w-screen flex items-center justify-center bg-[#1a1a1a]">
+      <div className="h-screen w-screen flex items-center justify-center bg-black">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     );
@@ -30,14 +29,21 @@ export default function Home() {
   }
 
   return (
-    <div className="h-screen w-screen flex items-center justify-center bg-[#1a1a1a]">
-      {/* Background */}
-      <div className="absolute inset-0 bg-[#1a1a1a]" />
+    <div className="h-screen w-screen bg-black overflow-hidden">
+      {/* Background gradient balls */}
+      <div className="absolute w-[300px] h-[300px] rounded-full bg-gradient-to-r from-[#0084ff] to-[#00ffff] blur-xl opacity-30 z-[-5]"
+           style={{ transform: 'translate(200px, -50px)' }} />
+      <div className="absolute w-[150px] h-[150px] rounded-full bg-gradient-to-r from-[#a200ff] to-[#000dff] blur-xl opacity-30 z-[-5]"
+           style={{ transform: 'translate(-160px, 100px)' }} />
+      <div className="absolute w-[240px] h-[240px] rounded-full bg-gradient-to-r from-[#00ffd9] to-[#00ff84] blur-xl opacity-30 z-[-5]"
+           style={{ transform: 'translate(-200px, -140px)' }} />
       
-      {/* Simply display the UserProfileCard in the center of the screen */}
-      <div className="z-10">
-        <UserProfileCard />
+      {/* Canvas Container */}
+      <div className="absolute inset-0" style={{ zIndex: 1 }}>
+        <Canvas3D sceneType={SceneType.HOME} />
       </div>
+      
+      {/* UserProfileCard is now included in AppLayout */}
     </div>
   );
 }
