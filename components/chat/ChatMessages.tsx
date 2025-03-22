@@ -35,7 +35,7 @@ export default function ChatMessages() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 20 }}
               transition={{ duration: 0.3 }}
-              className="mb-3 pointer-events-auto"
+              className="mb-3 pointer-events-none"
             >
               <div className="inline-block min-w-[250px] max-w-[95%] rounded-[12px] px-5 py-3 text-white backdrop-blur-md bg-black/40 border border-white/10 shadow-lg">
                 <div className="flex items-start gap-2">
