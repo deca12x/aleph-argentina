@@ -23,33 +23,33 @@ interface Collection {
 const collections: Collection[] = [
   {
     id: 1,
-    title: 'Boys NFT #1',
-    subtitle: 'Mantle Collection',
-    imageSrc: '/boys-nft-collection/image.webp',
+    title: 'Asado Mantle',
+    subtitle: 'IRL Event',
+    imageSrc: '/events/asado-mantle.png',
     bgColor: 'bg-blue-500/20',
     link: 'https://lu.ma/7kti91wl?tk=WNJEca'
   },
   {
     id: 2,
-    title: 'Boys NFT #2',
-    subtitle: 'Mantle Collection',
-    imageSrc: '/boys-nft-collection/image (1).webp',
+    title: 'Demo Day 1',
+    subtitle: 'IRL Event',
+    imageSrc: '/events/dmeoday1.png',
     bgColor: 'bg-purple-500/20',
     link: 'https://lu.ma/7kti91wl?tk=WNJEca'
   },
   {
     id: 3,
-    title: 'Boys NFT #3',
-    subtitle: 'Mantle Collection',
-    imageSrc: '/boys-nft-collection/image (2).webp',
+    title: 'Founder Mode',
+    subtitle: 'IRL Event',
+    imageSrc: '/events/foundermode.png',
     bgColor: 'bg-green-500/20',
     link: 'https://lu.ma/7kti91wl?tk=WNJEca'
   },
   {
     id: 4,
-    title: 'Boys NFT #4',
-    subtitle: 'Mantle Collection',
-    imageSrc: '/boys-nft-collection/image (3).webp',
+    title: 'Sozu BBQ',
+    subtitle: 'IRL Event',
+    imageSrc: '/events/sozubbq.png',
     bgColor: 'bg-yellow-500/20',
     link: 'https://lu.ma/7kti91wl?tk=WNJEca'
   }
@@ -194,8 +194,7 @@ export default function MantleClanPage() {
               Mantle Space
             </h1>
             <p className="text-gray-400 max-w-2xl font-greed">
-              Explore our curated NFT collections featuring exclusive digital artworks on the 
-              Mantle blockchain.
+              A place where you can explore both IRL and digital experiences curated by Mantle.
             </p>
           </header>
 
