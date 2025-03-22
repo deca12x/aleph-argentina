@@ -7,7 +7,7 @@ import { Loader2 } from "lucide-react";
 import Canvas3D from "@/components/3d/Canvas";
 
 export default function Home() {
-  const { ready, authenticated, logout } = usePrivy();
+  const { ready, authenticated } = usePrivy();
   const router = useRouter();
 
   useEffect(() => {
@@ -28,27 +28,5 @@ export default function Home() {
     return null;
   }
 
-  return (
-    <main className="relative w-full h-screen overflow-hidden">
-      {/* 3D Canvas as main content */}
-      <div className="absolute inset-0">
-        <Canvas3D />
-      </div>
-
-      {/* Minimal UI overlay */}
-      <div className="relative z-10 p-4">
-        <div className="flex justify-between items-center">
-          <h1 className="text-2xl font-bold text-white drop-shadow-lg">
-            Welcome to Buenos Aires
-          </h1>
-          <button
-            onClick={logout}
-            className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
-          >
-            Logout
-          </button>
-        </div>
-      </div>
-    </main>
-  );
+  return <Canvas3D />;
 }
