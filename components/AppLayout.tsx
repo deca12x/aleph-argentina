@@ -4,10 +4,32 @@ import { usePrivy } from "@privy-io/react-auth";
 import UserProfileCard from "@/components/chat/UserProfileCard";
 import LogoutButton from "@/components/LogoutButton";
 import PageTransition from "@/components/PageTransition";
-import { ReactNode } from "react";
+import { ReactNode, useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 
 export default function AppLayout({ children }: { children: ReactNode }) {
   const { authenticated } = usePrivy();
+  const pathname = usePathname();
+  const [showChatCard, setShowChatCard] = useState(true);
+  
+  // Listen for a custom event that will be dispatched when entering Mantle space
+  useEffect(() => {
+    // Check if we're on the Mantle page and hide chat by default
+    const isMantlePage = pathname?.includes('/clans/') && pathname?.includes('/Mantle');
+    setShowChatCard(!isMantlePage);
+    
+    // Listen for the showChat event to display chat after entering Mantle space
+    const handleShowChat = () => setShowChatCard(true);
+    const handleHideChat = () => setShowChatCard(false);
+    
+    window.addEventListener('showChat', handleShowChat);
+    window.addEventListener('hideChat', handleHideChat);
+    
+    return () => {
+      window.removeEventListener('showChat', handleShowChat);
+      window.removeEventListener('hideChat', handleHideChat);
+    };
+  }, [pathname]);
 
   return (
     <>
@@ -18,9 +40,11 @@ export default function AppLayout({ children }: { children: ReactNode }) {
       {authenticated && (
         <>
           <LogoutButton />
-          <div className="fixed inset-0 pointer-events-none" style={{ zIndex: 9000 }}>
-            <UserProfileCard />
-          </div>
+          {showChatCard && (
+            <div className="fixed inset-0 pointer-events-none" style={{ zIndex: 9000 }}>
+              <UserProfileCard />
+            </div>
+          )}
         </>
       )}
     </>

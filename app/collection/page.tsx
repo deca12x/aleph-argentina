@@ -3,13 +3,19 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import NavButton from "@/components/NavButton";
-import ChatMessages from "@/components/chat/ChatMessages";
-import { usePrivy } from "@privy-io/react-auth";
-import { useRouter } from "next/navigation";
-import { Loader2 } from "lucide-react";
 import MatrixView from '@/components/MatrixView';
 import RealLifeView from '@/components/RealLifeView';
+
+// Define ethereum window interface
+declare global {
+  interface Window {
+    ethereum?: {
+      request: (args: { method: string; params?: any[] }) => Promise<any>;
+      on: (event: string, callback: (...args: any[]) => void) => void;
+      removeListener: (event: string, callback: (...args: any[]) => void) => void;
+    };
+  }
+}
 
 interface Collection {
   id: number;
@@ -68,53 +74,18 @@ const MANTLE_NETWORK = {
   blockExplorerUrls: ['https://explorer.mantle.xyz'],
 };
 
-export default function MantleClanPage() {
-  const { ready, authenticated } = usePrivy();
-  const router = useRouter();
+export default function CollectionsPage() {
   const [showDemo, setShowDemo] = useState(false);
   const [activeDemo, setActiveDemo] = useState<'matrix' | 'reallife'>('matrix');
   const [walletConnected, setWalletConnected] = useState(false);
 
-  // Function to dispatch events for chat visibility
-  const dispatchChatEvent = (show: boolean) => {
-    if (typeof window !== 'undefined') {
-      const eventName = show ? 'showChat' : 'hideChat';
-      window.dispatchEvent(new Event(eventName));
-    }
-  };
-
-  // Toggle demo mode and dispatch appropriate event
-  const toggleDemo = (show: boolean) => {
-    setShowDemo(show);
-    // Small delay to ensure the event happens after state update
-    setTimeout(() => {
-      dispatchChatEvent(show);
-    }, 100);
-  };
-
-  useEffect(() => {
-    if (ready && !authenticated) {
-      router.push("/login");
-    }
-    // Check wallet connection when component mounts
-    checkWalletConnection();
-    
-    // When component mounts, ensure chat is hidden
-    dispatchChatEvent(false);
-    
-    // When component unmounts, restore chat
-    return () => {
-      dispatchChatEvent(true);
-    };
-  }, [ready, authenticated, router]);
-
   // Function to check if wallet is connected
   const checkWalletConnection = async () => {
-    if (typeof window !== 'undefined' && 'ethereum' in window && window.ethereum) {
+    if (typeof window.ethereum !== 'undefined') {
       try {
         // Check if already connected
         const accounts = await window.ethereum.request({ method: 'eth_accounts' });
-        if (accounts && accounts.length > 0) {
+        if (accounts.length > 0) {
           setWalletConnected(true);
         }
       } catch (error) {
@@ -123,9 +94,14 @@ export default function MantleClanPage() {
     }
   };
 
+  // Check wallet connection on component mount
+  useEffect(() => {
+    checkWalletConnection();
+  }, []);
+
   // Function to connect wallet and switch to Mantle network
   const connectWalletAndSwitchNetwork = async () => {
-    if (typeof window !== 'undefined' && 'ethereum' in window && window.ethereum) {
+    if (typeof window.ethereum !== 'undefined') {
       try {
         // Request account access
         await window.ethereum.request({ method: 'eth_requestAccounts' });
@@ -154,7 +130,7 @@ export default function MantleClanPage() {
         }
         
         // Show demo after wallet connection
-        toggleDemo(true);
+        setShowDemo(true);
       } catch (error) {
         console.error("Error connecting wallet:", error);
       }
@@ -166,29 +142,12 @@ export default function MantleClanPage() {
   // Handle Enter Space button click
   const handleEnterSpace = () => {
     connectWalletAndSwitchNetwork();
-    // This will be called after wallet connection, but also trigger here just in case
-    toggleDemo(true);
   };
-
-  if (!ready) {
-    return (
-      <div className="h-screen w-screen flex items-center justify-center bg-black">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-      </div>
-    );
-  }
-
-  if (!authenticated) {
-    return null;
-  }
 
   return (
     <main className="min-h-screen bg-black cursor-ethereum">
       {!showDemo ? (
         <div className="container mx-auto px-4 py-16">
-          {/* Return to home navigation */}
-          <NavButton href="/" label="Back to Home" position="top-left" />
-          
           <header className="flex flex-col items-center justify-center text-center mb-16">
             <h1 className="text-5xl md:text-7xl text-white font-bold mb-6 font-megazoid">
               Mantle Space
@@ -249,11 +208,10 @@ export default function MantleClanPage() {
           </div>
         </div>
       ) : (
-        <div className="relative h-screen w-screen overflow-hidden">
-          {/* Back to BA button */}
+        <div>
           <div className="absolute top-0 left-0 z-50 p-6">
             <button
-              onClick={() => toggleDemo(false)}
+              onClick={() => setShowDemo(false)}
               className="flex items-center gap-2 text-white/70 hover:text-white transition-colors duration-200"
             >
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -263,7 +221,6 @@ export default function MantleClanPage() {
             </button>
           </div>
 
-          {/* Matrix/Real Life toggle */}
           <div className="absolute top-0 right-0 z-50 p-6">
             <div className="flex items-center gap-4 bg-black/50 backdrop-blur-sm p-2 rounded-full border border-white/10">
               <button
@@ -289,15 +246,11 @@ export default function MantleClanPage() {
             </div>
           </div>
 
-          {/* Display appropriate view based on activeDemo */}
           {activeDemo === 'matrix' ? (
             <MatrixView />
           ) : (
             <RealLifeView />
           )}
-          
-          {/* Only show chat messages when demo is shown */}
-          <ChatMessages />
         </div>
       )}
     </main>
