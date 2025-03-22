@@ -5,6 +5,8 @@ import { clans } from "@/lib/clans";
 import type { Clan } from "@/lib/types";
 import { use, useEffect } from "react";
 import { useCitizensOfMantleNFT } from "@/lib/nft";
+import { useSwitchChain, useChainId } from "wagmi";
+import { mantleMainnet, zksyncMainnet } from "@/components/providers";
 
 interface ClanPageProps {
   params: Promise<{
@@ -15,6 +17,9 @@ interface ClanPageProps {
 export default function ClanPage({ params }: ClanPageProps) {
   const router = useRouter();
   const resolvedParams = use(params);
+  const chainId = useChainId();
+  const { switchChain } = useSwitchChain();
+
   const clanId = resolvedParams.clanId.startsWith("clan")
     ? resolvedParams.clanId
     : `clan${resolvedParams.clanId}`;
@@ -22,6 +27,17 @@ export default function ClanPage({ params }: ClanPageProps) {
 
   // Only check NFT ownership for Mantle clan
   const nftCheck = clan?.id === "clan4" ? useCitizensOfMantleNFT() : null;
+
+  // Auto-switch to appropriate network based on clan
+  useEffect(() => {
+    if (!switchChain) return;
+
+    if (clan?.id === "clan4" && chainId !== mantleMainnet.id) {
+      switchChain({ chainId: mantleMainnet.id });
+    } else if (clan?.id === "clan3" && chainId !== zksyncMainnet.id) {
+      switchChain({ chainId: zksyncMainnet.id });
+    }
+  }, [clan?.id, chainId, switchChain]);
 
   if (!clan) {
     return <h1>Clan not found</h1>;

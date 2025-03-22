@@ -2,7 +2,7 @@
 import * as React from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { PrivyProvider } from "@privy-io/react-auth";
-import { createConfig, WagmiProvider } from "wagmi";
+import { createConfig, WagmiProvider } from "@privy-io/wagmi";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { http } from "wagmi";
 import { defineChain } from "viem";
@@ -48,12 +48,12 @@ export const mantleTestnet = defineChain({
 });
 
 const wagmiConfig = createConfig({
-  chains: [zksyncMainnet, zksyncTestnet, mantleMainnet, mantleTestnet],
+  chains: [zksyncMainnet, mantleMainnet],
   transports: {
     [zksyncMainnet.id]: http(),
-    [zksyncTestnet.id]: http(),
+    // [zksyncTestnet.id]: http(),
     [mantleMainnet.id]: http(),
-    [mantleTestnet.id]: http(),
+    // [mantleTestnet.id]: http(),
   },
 });
 
