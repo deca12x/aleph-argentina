@@ -12,6 +12,7 @@ export const clans: Clan[] = [
       backgroundImage: "/zksync/b5462957-8306-46d3-acc8-320bdf21cfc6.webp",
       cardBackgroundImage: "/zksync/ec64396d-34d1-44ac-8de5-8dffff05013a.webp",
       logoImage: "/icons/white-sun.png",
+      hasEphemeralChat: true,
     },
   },
   {
@@ -36,6 +37,7 @@ export const clans: Clan[] = [
       backgroundImage: "/urbe/_PLG3709.webp",
       cardBackgroundImage: "/urbe/UVmemePowerRangers.webp",
       logoImage: "/urbe/urbe-logo.jpg",
+      hasEphemeralChat: true,
     },
   },
   {
@@ -86,6 +88,7 @@ export const clans: Clan[] = [
       backgroundImage: "/aleph/0f17355c-c5ce-49f0-86b6-bc2109e1ee5d.webp",
       cardBackgroundImage: "/aleph/9d016266-9d4d-4dbd-996f-26d60b0d5712.webp",
       logoImage: "/icons/aleph-logo.png",
+      hasEphemeralChat: true,
     },
   },
 ];
