@@ -59,7 +59,7 @@ export default function Home() {
       </div> */}
       
       {/* Navigation to Mantle Clan (Live Chat) */}
-      <NavButton href="/clans/mantle/Mantle" label="Go to Mantle Clan Chat" position="top-left" />
+      <NavButton href="/clans/clan4" label="Go to Mantle Clan Chat" position="top-left" />
       
       {/* Page Title */}
       <div className="absolute top-6 left-1/2 transform -translate-x-1/2 text-white text-2xl font-bold z-10">

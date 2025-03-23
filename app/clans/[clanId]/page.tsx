@@ -101,16 +101,16 @@ export default function ClanPage({ params }: ClanPageProps) {
   // Only check NFT ownership for Mantle clan
   const nftCheck = isMantleClan ? useCitizensOfMantleNFT() : null;
   
-  // Auto-switch to appropriate network based on clan
+  // Auto-switch to appropriate network based on clan - using pattern from main
   useEffect(() => {
     if (!switchChain) return;
 
-    if (isMantleClan && chainId !== mantleMainnet.id) {
+    if (clan?.id === "clan4" && chainId !== mantleMainnet.id) {
       switchChain({ chainId: mantleMainnet.id });
     } else if (clan?.id === "clan3" && chainId !== zksyncMainnet.id) {
       switchChain({ chainId: zksyncMainnet.id });
     }
-  }, [clan?.id, isMantleClan, chainId, switchChain]);
+  }, [clan?.id, chainId, switchChain]);
   
   // Function to dispatch events for chat visibility (Mantle specific)
   const dispatchChatEvent = (show: boolean) => {
@@ -141,18 +141,6 @@ export default function ClanPage({ params }: ClanPageProps) {
     }
   }, [isMantleClan]);
   
-  // Log debug info for Mantle clan
-  useEffect(() => {
-    if (isMantleClan) {
-      console.log("NFT Debug Info:", {
-        hasNFT: nftCheck?.hasNFT,
-        isCheckingNFT: nftCheck?.isLoading,
-        isError: nftCheck?.isError,
-        isWrongNetwork: nftCheck?.isWrongNetwork,
-      });
-    }
-  }, [isMantleClan, nftCheck?.hasNFT, nftCheck?.isLoading, nftCheck?.isError, nftCheck?.isWrongNetwork]);
-
   // Function to check if wallet is connected (Mantle specific)
   const checkWalletConnection = async () => {
     if (typeof window !== 'undefined' && 'ethereum' in window && window.ethereum) {
@@ -408,7 +396,7 @@ export default function ClanPage({ params }: ClanPageProps) {
     );
   }
   
-  // Default UI for other clans
+  // Default UI for other clans - improved from main but kept simpler than Mantle UI
   return (
     <div className="relative h-screen w-screen overflow-hidden">
       {/* Background image with overlay */}
@@ -422,11 +410,6 @@ export default function ClanPage({ params }: ClanPageProps) {
         />
         <div className="absolute inset-0 bg-black/60"></div>
       </div>
-      
-      {/* Canvas Container - Temporarily commented out */}
-      {/* <div className="absolute inset-0 z-[2]">
-        <Canvas3D sceneType={SceneType.DEVCONNECT} />
-      </div> */}
       
       {/* Clan Name Display */}
       <div className="absolute top-8 left-1/2 transform -translate-x-1/2 text-white text-3xl font-bold z-10">
