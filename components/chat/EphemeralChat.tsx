@@ -11,8 +11,6 @@ import { clans } from '@/lib/poapData'
 import { useSwitchChain, useChainId } from 'wagmi'
 import { mantleMainnet, zksyncMainnet } from '@/components/providers'
 import { cn } from '@/lib/utils'
-import { useNetwork } from 'wagmi'
-import FormatAddress from '@/lib/formatAddress'
 
 // Message sender type
 export interface MessageSender {
@@ -36,6 +34,12 @@ type TransactionStatus = 'idle' | 'pending' | 'confirming' | 'success' | 'error'
 // Max wall messages
 const MAX_WALL_MESSAGES = 16;
 
+// Format address helper function
+const formatAddress = (address: string): string => {
+  if (!address || address === 'unknown') return '0x...????'
+  return `0x...${address.slice(-4)}`
+}
+
 export default function EphemeralChat() {
   const { messages, sendMessage, messageDuration } = useEphemeralChat()
   const [inputMessage, setInputMessage] = useState('')
@@ -55,7 +59,6 @@ export default function EphemeralChat() {
   const pathname = usePathname()
   const chainId = useChainId()
   const { switchChain } = useSwitchChain()
-  const { chain } = useNetwork()
   
   // Extract clan ID from URL
   const clanId = pathname.split('/').filter(Boolean)[1] || '1'
@@ -63,8 +66,8 @@ export default function EphemeralChat() {
   // Find the clan with the matching ID
   const currentClan = clans.find(c => c.id.toString() === clanId) || clans[0]
   
-  // Get network token symbol
-  const tokenSymbol = chain?.id === 5000 || chain?.id === 5003 ? 'MNT' : 'ETH'
+  // Get network token symbol based on chainId
+  const tokenSymbol = chainId === 5000 || chainId === 5003 ? 'MNT' : 'ETH'
   
   // Get the primary and secondary colors for styling
   const primaryColor = currentClan?.visualProperties?.primaryColor || '#FF5722'
@@ -135,12 +138,6 @@ export default function EphemeralChat() {
     ensureCorrectNetwork()
   }, [currentClan.id, chainId, switchChain, authenticated])
 
-  // Format address for display
-  const formatAddress = (address: string): string => {
-    if (!address || address === 'unknown') return '0x...????'
-    return `0x...${address.slice(-4)}`
-  }
-
   // Calculate remaining time for a message
   const getRemainingTime = (expiresAt: Date): string => {
     const now = new Date()
@@ -208,10 +205,14 @@ export default function EphemeralChat() {
             setWallMessages(prev => [...prev, {
               id: msgId,
               text: inputMessage.trim(),
-              sender: user?.wallet?.address || 'unknown',
+              sender: { 
+                address: user?.wallet?.address || 'unknown',
+                displayName: user?.email?.address 
+              },
               timestamp: new Date(),
+              expiresAt: new Date(Date.now() + messageDuration(paymentAmount) * 60000),
               paymentAmount: paymentAmount
-            }].sort((a, b) => parseFloat(a.paymentAmount) - parseFloat(b.paymentAmount)))
+            }].sort((a, b) => parseFloat(b.paymentAmount) - parseFloat(a.paymentAmount)))
           } else {
             // Replace cheapest message if wall is full and new message pays more
             if (parseFloat(paymentAmount) > parseFloat(minPaymentToReplace)) {
@@ -223,12 +224,16 @@ export default function EphemeralChat() {
                 newMessages.push({
                   id: msgId,
                   text: inputMessage.trim(),
-                  sender: user?.wallet?.address || 'unknown',
+                  sender: { 
+                    address: user?.wallet?.address || 'unknown',
+                    displayName: user?.email?.address 
+                  },
                   timestamp: new Date(),
+                  expiresAt: new Date(Date.now() + messageDuration(paymentAmount) * 60000),
                   paymentAmount: paymentAmount
                 })
-                // Sort by payment amount
-                return newMessages.sort((a, b) => parseFloat(a.paymentAmount) - parseFloat(b.paymentAmount))
+                // Sort by payment amount (highest first)
+                return newMessages.sort((a, b) => parseFloat(b.paymentAmount) - parseFloat(a.paymentAmount))
               })
             }
           }
