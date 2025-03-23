@@ -569,55 +569,14 @@ export default function EphemeralChat() {
                   {inputMessage.length}/60 characters
                 </div>
 
-                {/* Warning when on entry page or outside clan space */}
-                {(!hasEnteredSpace && inputMessage.trim() && showPaymentInput) && (
-                  <div 
-                    className="mt-3 p-3 rounded-lg border border-yellow-500/30 bg-yellow-500/10 backdrop-blur-lg"
-                  >
-                    <div className="flex items-start mb-2">
-                      <AlertCircle size={16} className="text-yellow-400 flex-shrink-0 mr-2 mt-0.5" />
-                      <h4 className="text-sm font-medium text-yellow-400">Access Required</h4>
-                    </div>
-                    <p className="text-xs text-white/90 mb-2">
-                      You must enter the clan space to write messages on this public wall.
-                      {isEntryPage ? " Click the 'Enter Space' button below." : " Navigate to a clan first."}
-                    </p>
-                    <ul className="text-xs text-white/80 list-disc pl-4 mb-2 space-y-1">
-                      <li>Only 16 messages can appear on the wall at once</li>
-                      <li>Higher bids will remain longer on the wall</li>
-                      <li>When wall is full, new bids will replace the lowest paid messages</li>
-                      <li>Set a higher price to ensure your message stays visible</li>
-                    </ul>
-                    {isEntryPage ? (
-                      <button
-                        className="w-full text-white/90 py-1.5 mt-1 rounded text-xs transition-colors bg-yellow-500/30 hover:bg-yellow-500/40"
-                        onClick={() => {
-                          // Dispatch the enter space event that the clan page is listening for
-                          const enterEvent = new Event('enterSpace');
-                          document.dispatchEvent(enterEvent);
-                          setShowPaymentInput(false);
-                        }}
-                      >
-                        Enter Clan Space to Post
-                      </button>
-                    ) : (
-                      <button
-                        className="w-full text-white/90 py-1.5 mt-1 rounded text-xs transition-colors bg-yellow-500/30 hover:bg-yellow-500/40"
-                        onClick={() => {
-                          // Find a default clan to navigate to
-                          const defaultClan = clans[0]?.id || 'mantle';
-                          router.push(`/clans/${defaultClan}`);
-                          setShowPaymentInput(false);
-                        }}
-                      >
-                        Go to Clan Space
-                      </button>
-                    )}
-                  </div>
+                {/* Warning when on entry page or outside clan space - REMOVED */}
+                {/* Replace the access warning with a simple spacer div */}
+                {(inputMessage.trim() && showPaymentInput) && (
+                  <div className="mt-3"></div>
                 )}
 
-                {/* Payment input - only show if user has entered the space */}
-                {showPaymentInput && hasEnteredSpace && (
+                {/* Payment input - show even if user hasn't entered the space */}
+                {showPaymentInput && (
                   <div 
                     className="mt-3 p-3 rounded-lg border border-white/10"
                     style={{ 

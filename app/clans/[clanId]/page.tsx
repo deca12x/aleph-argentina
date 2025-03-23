@@ -441,54 +441,17 @@ export default function ClanPage({ params }: ClanPageProps) {
 
   // Function to connect wallet and switch to appropriate network
   const connectWalletAndSwitchNetwork = async () => {
-    if (
-      typeof window !== "undefined" &&
-      "ethereum" in window &&
-      window.ethereum
-    ) {
-      try {
-        await window.ethereum.request({ method: "eth_requestAccounts" });
-        setWalletConnected(true);
-
-        // Determine which network to use based on clan
-        const network = (clan?.id === "mantle" || clan?.id === "urbe") ? 
-          MANTLE_NETWORK : (clan?.id === "zksync" || clan?.id === "crecimiento") ? 
-          ZKSYNC_NETWORK : MANTLE_NETWORK;
-
-        try {
-          await window.ethereum.request({
-            method: "wallet_switchEthereumChain",
-            params: [{ chainId: network.chainId }],
-          });
-        } catch (switchError: any) {
-          if (switchError.code === 4902) {
-            try {
-              await window.ethereum.request({
-                method: "wallet_addEthereumChain",
-                params: [network],
-              });
-            } catch (addError) {
-              console.error(`Error adding ${network.chainName} network:`, addError);
-            }
-          } else {
-            console.error(`Error switching to ${network.chainName} network:`, switchError);
-          }
-        }
-
-        toggleDemo(true);
-      } catch (error) {
-        console.error("Error connecting wallet:", error);
-      }
-    } else {
-      alert("Please install a Web3 wallet like MetaMask to continue!");
-    }
+    // Skip actual wallet connection and network switching
+    // Just set the state and proceed with showing the space
+    setWalletConnected(true);
+    toggleDemo(true);
   };
 
   // Handle Enter Space button click
   const handleEnterSpace = () => {
     document.body.classList.add("page-transitioning");
     setTimeout(() => {
-      connectWalletAndSwitchNetwork();
+      // Simplified entry - no wallet connection needed
       toggleDemo(true);
       document.body.classList.remove("page-transitioning");
     }, 500);

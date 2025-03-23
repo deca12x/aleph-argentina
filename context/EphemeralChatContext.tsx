@@ -23,6 +23,39 @@ const EphemeralChatContext = createContext<EphemeralChatContextType>({
   messageDuration: () => 30, // default 30 minutes
 })
 
+// Sample bot messages
+const botMessages = [
+  "¡Bienvenidos a Aleph LATAM!",
+  "Buenos Aires is amazing! 🇦🇷",
+  "Blockchain for everyone!",
+  "ZK proofs are the future",
+  "Mantle scale for everyone",
+  "Want to learn about crypto? Visit the LATAM hub",
+  "Web3 is for builders",
+  "Join our hackathon next month!",
+  "Excited about the LATAM DAO launch",
+  "Thank you to all our sponsors!",
+  "Next meetup: Friday 8PM at Aleph Hub",
+  "Have you claimed your POAP yet?",
+  "Check out the new dApps showcase",
+  "NFTs are more than just art",
+  "ZK scaling solutions workshop tomorrow",
+  "DeFi is revolutionizing finance in LATAM",
+  "Learn Solidity at our next workshop",
+  "Looking for beta testers for our new dApp",
+  "Follow us on Twitter @AlephLATAM",
+  "¡Vamos Argentina! 🇦🇷",
+];
+
+// Sample bot addresses
+const botAddresses = [
+  "0x8901a4eafb8ac4c86e8a7656c9992894bce52ffb",
+  "0x9a34e6ce0a31a7c8abf87312bd4845ab07950f19",
+  "0x7348943c8d263ea253133699f3ea3f5567afbf76",
+  "0x1d49d3fa9a32b146d8afb7ee20c970a4a8db11b0",
+  "0xed5af388653567af2f388e6224dc7c4b3241c544",
+];
+
 // Custom hook to use the ephemeral chat context
 export const useEphemeralChat = () => useContext(EphemeralChatContext)
 
@@ -157,6 +190,50 @@ export function EphemeralChatProvider({ children }: { children: ReactNode }) {
     
     return () => clearInterval(intervalId)
   }, [])
+
+  // Bot message generator
+  useEffect(() => {
+    // Function to create a random bot message
+    const createBotMessage = () => {
+      const randomMessageIndex = Math.floor(Math.random() * botMessages.length);
+      const randomAddressIndex = Math.floor(Math.random() * botAddresses.length);
+      
+      const text = botMessages[randomMessageIndex];
+      const address = botAddresses[randomAddressIndex];
+      
+      // Randomly decide if this is a premium message (1 in 4 chance)
+      const isPremium = Math.random() < 0.25;
+      const paymentAmount = isPremium ? 
+        (Math.random() * 5 + 5).toFixed(2) : // 5-10 for premium 
+        (Math.random() * 0.2).toFixed(2);    // 0-0.2 for standard
+
+      // Calculate expiry time
+      const expiryMinutes = messageDuration(paymentAmount);
+      
+      // Create the bot message
+      const botMessage: EphemeralMessage = {
+        id: crypto.randomUUID(),
+        text,
+        sender: {
+          address,
+          displayName: isPremium ? "AlephBot Premium" : "AlephBot"
+        },
+        timestamp: new Date(),
+        expiresAt: new Date(Date.now() + expiryMinutes * 60000),
+        paymentAmount
+      };
+      
+      // Add to messages array
+      setMessages(prev => [...prev, botMessage]);
+    };
+    
+    // Create a bot message every 2-5 seconds
+    const botInterval = setInterval(() => {
+      createBotMessage();
+    }, Math.random() * 3000 + 2000); // 2-5 seconds
+    
+    return () => clearInterval(botInterval);
+  }, []);
 
   // Effect to remove expired messages
   useEffect(() => {

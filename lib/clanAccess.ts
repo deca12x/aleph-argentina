@@ -138,90 +138,15 @@ export async function checkPoapOwnership(
  * In a real implementation, this would check for POAPs, NFTs, or other credentials.
  */
 export function useClanAccess(clanId?: string): ClanAccessResult {
-  const [canWrite, setCanWrite] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  const [canWrite, setCanWrite] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [reason, setReason] = useState<string | null>(null);
   const { user, authenticated, ready } = usePrivy();
 
   useEffect(() => {
-    const checkAccess = async () => {
-      // Start with loading state
-      setIsLoading(true);
-
-      // Default to false if no clan ID or not authenticated
-      if (!clanId || !authenticated || !ready || !user?.wallet?.address) {
-        setCanWrite(false);
-        setReason("Not connected or no clan specified");
-        setIsLoading(false);
-        return;
-      }
-
-      try {
-        // In a real implementation, we would check for POAPs, NFTs, or other credentials here
-        // For now, we're using a mock implementation with hardcoded values
-
-        // Get wallet address
-        const address = user.wallet.address.toLowerCase();
-
-        // Mock POAP/NFT checks based on last character of address and clan
-        // This is just for demo purposes
-        const lastChar = address.slice(-1);
-
-        // Simulate API call delay
-        await new Promise((resolve) => setTimeout(resolve, 500));
-
-        // Mantle clan (clan4) - allow addresses ending with odd numbers
-        if (clanId === "clan4" || clanId === "mantle") {
-          const hasAccess = parseInt(lastChar, 16) % 2 === 1;
-          setCanWrite(hasAccess);
-          setReason(
-            hasAccess ? null : "Need a Mantle POAP to write in this clan"
-          );
-        }
-        // ZKSync clan (clan3) - allow addresses ending with even numbers
-        else if (clanId === "clan3" || clanId === "zksync") {
-          const hasAccess = parseInt(lastChar, 16) % 2 === 0;
-          setCanWrite(hasAccess);
-          setReason(
-            hasAccess ? null : "Need a zkSync POAP to write in this clan"
-          );
-        }
-        // Urbe clan (clan2) - allow addresses ending with 0-7
-        else if (clanId === "clan2" || clanId === "urbe") {
-          const hasAccess = parseInt(lastChar, 16) < 8;
-          setCanWrite(hasAccess);
-          setReason(
-            hasAccess ? null : "Need an Urbe POAP to write in this clan"
-          );
-        }
-        // Crecimiento clan (clan1) - allow addresses ending with 8-F
-        else if (clanId === "clan1" || clanId === "crecimiento") {
-          const hasAccess = parseInt(lastChar, 16) >= 8;
-          setCanWrite(hasAccess);
-          setReason(
-            hasAccess ? null : "Need a Crecimiento POAP to write in this clan"
-          );
-        }
-        // Aleph clan (clan5) - allow any authenticated user
-        else if (clanId === "clan5" || clanId === "aleph") {
-          setCanWrite(true);
-          setReason(null);
-        }
-        // Default for unknown clans
-        else {
-          setCanWrite(false);
-          setReason("Unknown clan");
-        }
-      } catch (error) {
-        console.error("Error checking clan access:", error);
-        setCanWrite(false);
-        setReason("Error checking access");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    checkAccess();
+    setCanWrite(true);
+    setIsLoading(false);
+    setReason(null);
   }, [clanId, authenticated, ready, user?.wallet?.address]);
 
   return { canWrite, isLoading, reason };
