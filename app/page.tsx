@@ -69,7 +69,7 @@ export default function Home() {
               hover:scale-105 hover:shadow-lg hover:border-white/40 text-white text-sm`}
             style={{ top: `${top}vh` }}
           >
-            Go to {clan.name} Clan
+            Go to {clan.name} Space
           </Link>
         );
       })}

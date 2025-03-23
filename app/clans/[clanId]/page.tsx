@@ -40,7 +40,7 @@ const mantleCollections: Collection[] = [
     subtitle: "IRL Event",
     imageSrc: "/events/asado-mantle.png",
     bgColor: "bg-blue-500/20",
-    link: "https://lu.ma/7kti91wl?tk=WNJEca",
+    link: "https://lu.ma/aleph-argentina-asado",
   },
   {
     id: 2,
@@ -48,7 +48,7 @@ const mantleCollections: Collection[] = [
     subtitle: "IRL Event",
     imageSrc: "/events/dmeoday1.png",
     bgColor: "bg-purple-500/20",
-    link: "https://lu.ma/7kti91wl?tk=WNJEca",
+    link: "https://lu.ma/aleph-demo-day",
   },
   {
     id: 3,
@@ -56,7 +56,7 @@ const mantleCollections: Collection[] = [
     subtitle: "IRL Event",
     imageSrc: "/events/foundermode.png",
     bgColor: "bg-green-500/20",
-    link: "https://lu.ma/7kti91wl?tk=WNJEca",
+    link: "https://lu.ma/founder-mode-latam",
   },
   {
     id: 4,
@@ -64,7 +64,7 @@ const mantleCollections: Collection[] = [
     subtitle: "IRL Event",
     imageSrc: "/events/sozubbq.png",
     bgColor: "bg-yellow-500/20",
-    link: "https://lu.ma/7kti91wl?tk=WNJEca",
+    link: "https://lu.ma/sozu-bbq-event",
   },
 ];
 
@@ -449,6 +449,13 @@ export default function ClanPage({ params }: ClanPageProps) {
 
   // Handle Enter Space button click
   const handleEnterSpace = () => {
+    // If the current clan is "crecimiento", redirect to Luma
+    if (clanId === "crecimiento") {
+      window.open("https://lu.ma/aleph-argentina", "_blank");
+      return;
+    }
+    
+    // Otherwise, use the original demo view toggle behavior
     document.body.classList.add("page-transitioning");
     setTimeout(() => {
       // Simplified entry - no wallet connection needed
@@ -478,7 +485,7 @@ export default function ClanPage({ params }: ClanPageProps) {
   if (!clan) {
     return (
       <div className="relative h-screen w-screen overflow-hidden flex items-center justify-center">
-        <h1 className="text-white text-3xl z-10">Clan not found</h1>
+        <h1 className="text-white text-3xl z-10">Space not found</h1>
         <div className="absolute inset-0 bg-black/60 z-0"></div>
       </div>
     );
@@ -491,7 +498,7 @@ export default function ClanPage({ params }: ClanPageProps) {
 
   return (
     <main className="min-h-screen bg-black cursor-ethereum">
-      {/* Clan logo button - always visible */}
+      {/* Space logo button - always visible */}
       <a
         href="https://mintle.app/section/art_projects"
         target="_blank"
