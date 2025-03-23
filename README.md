@@ -51,9 +51,11 @@ Aleph is a **fully functional AR SocialFi tool** that combines augmented reality
 - **Frontend**: React, Next.js, Three.js
 - **AR Technology**: Scaniverse + 8th Wall
 - **Blockchain**: Deployed on Mantle Network and zkSync Era
-- **Smart Contracts**: Solidity (ERC-721 for location NFTs)
-- **Storage**: IPFS for AR content
-- **Authentication**: Connect Kit + Wallet Connect
+- **Smart Contracts**: Solidity custom contract deployed on Mantle Mainnet and ZKSync Era Mainnet.
+  The contract stores Ethereal messages on-chain secturely and is optimized for gas efficiency using tight packing with in line assembly.
+- https://github.com/deca12x/AlephContract
+- **Storage**: Our cusotm smart contract described above.
+- **Authentication**: Privy social login
 
 ## 🚀 How It Works
 
