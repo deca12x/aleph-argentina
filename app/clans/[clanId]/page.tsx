@@ -545,7 +545,7 @@ export default function ClanPage({ params }: ClanPageProps) {
       {!showDemo ? (
         <div className="container mx-auto px-4 py-16">
           {/* Return to home navigation */}
-          <NavButton href="/" label="Back to Home" position="top-left" />
+          <NavButton href="/" label="Back to BA" position="top-left" />
 
           <header className="flex flex-col items-center justify-center text-center mb-16">
             <h1 className="text-5xl md:text-7xl text-white font-bold mb-6 font-megazoid">
