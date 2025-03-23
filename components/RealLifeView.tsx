@@ -11,7 +11,7 @@ import {
   EasterEggLocation,
   ClanWelcomeMessage
 } from '@/lib/easter-eggs';
-import { clans } from '@/lib/clans';
+import { clans } from '@/lib/poapData';
 import { Clan } from '@/lib/types';
 
 export default function RealLifeView() {
