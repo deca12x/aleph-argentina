@@ -7,4 +7,11 @@ export interface Clan {
   id: string;
   name: string;
   poapIds: string[];
+  visualProperties?: {
+    primaryColor?: string;
+    secondaryColor?: string;
+    backgroundImage?: string;
+    cardBackgroundImage?: string;
+    logoImage?: string;
+  };
 }

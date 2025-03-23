@@ -5,6 +5,13 @@ export const clans: Clan[] = [
     id: "clan1",
     name: "Crecimiento",
     poapIds: [],
+    visualProperties: {
+      primaryColor: "#4CAF50",
+      secondaryColor: "#8BC34A",
+      backgroundImage: "/mantle1.webp", // Using Mantle image as placeholder
+      cardBackgroundImage: "/mantle2.webp", // Using Mantle image as placeholder
+      logoImage: "/icons/growth-logo.png"
+    }
   },
   {
     id: "clan2",
@@ -21,11 +28,25 @@ export const clans: Clan[] = [
       "175582",
       "175491",
     ],
+    visualProperties: {
+      primaryColor: "#2196F3",
+      secondaryColor: "#03A9F4",
+      backgroundImage: "/mantle1.webp", // Using Mantle image as placeholder
+      cardBackgroundImage: "/mantle2.webp", // Using Mantle image as placeholder
+      logoImage: "/icons/urbe-logo.png"
+    }
   },
   {
     id: "clan3",
     name: "zkSync",
     poapIds: [],
+    visualProperties: {
+      primaryColor: "#9C27B0",
+      secondaryColor: "#E040FB",
+      backgroundImage: "/mantle1.webp", // Using Mantle image as placeholder
+      cardBackgroundImage: "/mantle2.webp", // Using Mantle image as placeholder
+      logoImage: "/icons/zksync-logo.png"
+    }
   },
   {
     id: "clan4",
@@ -40,10 +61,24 @@ export const clans: Clan[] = [
       "183425",
       "183020",
     ],
+    visualProperties: {
+      primaryColor: "#FF5722",
+      secondaryColor: "#FF9800",
+      backgroundImage: "/mantle1.webp",
+      cardBackgroundImage: "/mantle2.webp",
+      logoImage: "/icons/mantle-mnt-logo (1).png"
+    }
   },
   {
     id: "clan5",
     name: "Aleph",
     poapIds: [],
+    visualProperties: {
+      primaryColor: "#607D8B",
+      secondaryColor: "#90A4AE",
+      backgroundImage: "/mantle1.webp", // Using Mantle image as placeholder
+      cardBackgroundImage: "/mantle2.webp", // Using Mantle image as placeholder
+      logoImage: "/icons/aleph-logo.png"
+    }
   },
 ];
