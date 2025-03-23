@@ -44,6 +44,7 @@ export default function EphemeralChat() {
   const { messages, sendMessage, messageDuration } = useEphemeralChat()
   const [inputMessage, setInputMessage] = useState('')
   const [isExpanded, setIsExpanded] = useState(false)
+  const [isMinimized, setIsMinimized] = useState(false)
   const [showPaymentInput, setShowPaymentInput] = useState(false)
   const [paymentAmount, setPaymentAmount] = useState('0')
   const [minimumPayment, setMinimumPayment] = useState('0')
@@ -51,6 +52,7 @@ export default function EphemeralChat() {
   const [txStatus, setTxStatus] = useState<TransactionStatus>('idle')
   const [lastMessageId, setLastMessageId] = useState<string | null>(null)
   const [wallMessages, setWallMessages] = useState<EphemeralMessage[]>([])
+  const [userMessages, setUserMessages] = useState<EphemeralMessage[]>([])
   const [minPaymentToReplace, setMinPaymentToReplace] = useState<string>('0')
   const [isWallFull, setIsWallFull] = useState(false)
   const chatContainerRef = useRef<HTMLDivElement>(null)
@@ -82,8 +84,18 @@ export default function EphemeralChat() {
   
   // Load and organize wall messages
   useEffect(() => {
+    // Filter bot messages for wall display, but keep user messages separate
+    const botMessages = messages.filter(msg => 
+      !msg.sender.address || 
+      (user?.wallet?.address && msg.sender.address !== user.wallet.address)
+    );
+    
+    const usrMessages = messages.filter(msg => 
+      user?.wallet?.address && msg.sender.address === user.wallet.address
+    );
+    
     // Sort messages by payment amount (highest first)
-    const sortedMessages = [...messages].sort((a, b) => {
+    const sortedMessages = [...botMessages].sort((a, b) => {
       const amountA = parseFloat(a.paymentAmount) || 0
       const amountB = parseFloat(b.paymentAmount) || 0
       return amountB - amountA
@@ -105,6 +117,7 @@ export default function EphemeralChat() {
     
     const wallMessagesList = [...topMessages, ...placeholders]
     setWallMessages(wallMessagesList)
+    setUserMessages(usrMessages)
     
     // Update minimum payment required (lowest amount on wall + 0.000001)
     if (topMessages.length >= MAX_WALL_MESSAGES) {
@@ -113,7 +126,7 @@ export default function EphemeralChat() {
     } else {
       setMinPaymentToReplace('0')
     }
-  }, [messages])
+  }, [messages, user?.wallet?.address])
 
   // Auto scroll to bottom of messages
   useEffect(() => {
@@ -279,11 +292,25 @@ export default function EphemeralChat() {
 
   // Toggle chat expanded state
   const toggleExpanded = () => {
-    setIsExpanded(!isExpanded)
+    if (isMinimized) {
+      setIsMinimized(false);
+      setIsExpanded(true);
+    } else {
+      setIsExpanded(!isExpanded);
+    }
+    
     if (!isExpanded && inputRef.current) {
       setTimeout(() => {
         inputRef.current?.focus()
       }, 300)
+    }
+  }
+  
+  // Toggle minimized state
+  const toggleMinimized = () => {
+    setIsMinimized(!isMinimized);
+    if (!isMinimized) {
+      setIsExpanded(false);
     }
   }
 
@@ -298,13 +325,17 @@ export default function EphemeralChat() {
     }
   }
 
-  // Show only the last 8 messages
-  const visibleMessages = messages.slice(-8)
+  // Get the latest wall message for the minimized view
+  const latestWallMessage = wallMessages.filter(msg => msg.text.trim() !== '')[0];
+
+  // Show user messages only (their own transactions)
+  const userTransactions = userMessages.slice(-5);
 
   return (
     <div 
       className={`fixed bottom-4 right-4 z-[1000] flex flex-col transition-all duration-300 ease-in-out ${
-        isExpanded ? 'w-[320px] md:w-[420px] shadow-2xl' : 'w-[280px] md:w-[320px] shadow-lg'
+        isExpanded ? 'w-[320px] md:w-[420px] shadow-2xl' : 
+        isMinimized ? 'w-[250px] shadow-lg' : 'w-[280px] md:w-[320px] shadow-lg'
       }`}
     >
       {/* Transaction Status Indicator */}
@@ -391,22 +422,90 @@ export default function EphemeralChat() {
           background: `linear-gradient(to right, ${primaryColor}10, ${secondaryColor}10)`,
           borderColor: `${primaryColor}30` 
         }}
-        className="backdrop-blur-xl rounded-t-xl border-t border-l border-r flex justify-between items-center px-3 py-2 cursor-pointer"
-        onClick={toggleExpanded}
+        className="backdrop-blur-xl rounded-t-xl border-t border-l border-r flex justify-between items-center px-3 py-2"
       >
-        <div className="flex items-center">
+        <div className="flex items-center cursor-pointer" onClick={toggleExpanded}>
           <div className="h-2 w-2 rounded-full mr-2" style={{ backgroundColor: primaryColor }}></div>
           <h3 className="text-white font-medium">
-            {currentClan?.name || 'On-chain'} Wall
+            {isMinimized ? "Latest Message" : `${currentClan?.name || 'On-chain'} Wall`}
           </h3>
         </div>
         <div className="flex items-center space-x-2">
           <span className="text-xs text-white/60">{messages.length} message{messages.length !== 1 ? 's' : ''}</span>
-          <button className="text-white/70 hover:text-white">
+          <button 
+            className="text-white/70 hover:text-white"
+            onClick={toggleMinimized}
+            title={isMinimized ? "Expand" : "Minimize"}
+          >
+            {isMinimized ? 
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="15 3 21 3 21 9"></polyline>
+                <polyline points="9 21 3 21 3 15"></polyline>
+                <line x1="21" y1="3" x2="14" y2="10"></line>
+                <line x1="3" y1="21" x2="10" y2="14"></line>
+              </svg> : 
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="4 14 10 14 10 20"></polyline>
+                <polyline points="20 10 14 10 14 4"></polyline>
+                <line x1="14" y1="10" x2="21" y2="3"></line>
+                <line x1="3" y1="21" x2="10" y2="14"></line>
+              </svg>
+            }
+          </button>
+          <button 
+            className="text-white/70 hover:text-white"
+            onClick={toggleExpanded}
+          >
             {isExpanded ? <X size={16} /> : <span>+</span>}
           </button>
         </div>
       </div>
+
+      {/* Minimized view - single latest message */}
+      {isMinimized && (
+        <div 
+          style={{ 
+            background: `linear-gradient(to right, ${primaryColor}05, ${secondaryColor}05)`,
+            borderColor: `${primaryColor}20` 
+          }}
+          className="backdrop-blur-xl border-l border-r border-b rounded-b-xl p-2"
+        >
+          {latestWallMessage && latestWallMessage.text ? (
+            <motion.div
+              key={latestWallMessage.id}
+              initial={{ opacity: 0, y: 5 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.2 }}
+              className="rounded-lg p-2 border"
+              style={{ 
+                background: parseFloat(latestWallMessage.paymentAmount) > 10 
+                  ? `linear-gradient(to right, ${primaryColor}25, ${secondaryColor}25)` 
+                  : parseFloat(latestWallMessage.paymentAmount) > 0
+                  ? `linear-gradient(to right, ${primaryColor}15, ${secondaryColor}15)`
+                  : 'rgba(0, 0, 0, 0.4)',
+                borderColor: parseFloat(latestWallMessage.paymentAmount) > 10
+                  ? `${primaryColor}40` 
+                  : parseFloat(latestWallMessage.paymentAmount) > 0
+                  ? `${primaryColor}30`
+                  : 'rgba(255, 255, 255, 0.1)'
+              }}
+            >
+              <div className="text-sm text-white leading-tight mb-1">
+                <span className="flex items-center justify-between mb-1">
+                  <span className="text-xs font-mono opacity-70">
+                    {formatAddress(latestWallMessage.sender.address)}
+                  </span>
+                </span>
+                {latestWallMessage.text}
+              </div>
+            </motion.div>
+          ) : (
+            <div className="text-white/40 text-center py-2 text-sm">
+              No messages yet
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Messages container */}
       <AnimatePresence>
@@ -426,49 +525,99 @@ export default function EphemeralChat() {
               ref={chatContainerRef}
               className="max-h-[320px] overflow-y-auto py-2 px-3 flex flex-col space-y-2 scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent"
             >
-              {visibleMessages.length === 0 ? (
+              {/* Wall messages (from others) */}
+              {wallMessages.filter(msg => msg.text.trim() !== '').length === 0 ? (
                 <div className="text-white/40 text-center py-6 text-sm">
                   No messages yet. Be the first!
                 </div>
               ) : (
-                visibleMessages.map((message) => (
+                wallMessages
+                  .filter(msg => msg.text.trim() !== '')
+                  .map((message) => (
+                    <motion.div
+                      key={message.id}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.2 }}
+                      className={`rounded-lg p-2 border ${message.id === lastMessageId ? 'ring-2' : ''}`}
+                      style={{ 
+                        background: parseFloat(message.paymentAmount) > 10 
+                          ? `linear-gradient(to right, ${primaryColor}25, ${secondaryColor}25)` 
+                          : parseFloat(message.paymentAmount) > 0
+                          ? `linear-gradient(to right, ${primaryColor}15, ${secondaryColor}15)`
+                          : 'rgba(0, 0, 0, 0.4)',
+                        borderColor: parseFloat(message.paymentAmount) > 10
+                          ? `${primaryColor}40` 
+                          : parseFloat(message.paymentAmount) > 0
+                          ? `${primaryColor}30`
+                          : 'rgba(255, 255, 255, 0.1)',
+                        ...(message.id === lastMessageId ? { '--ring-color': primaryColor } : {})
+                      }}
+                    >
+                      <div className="text-sm text-white leading-tight mb-1">
+                        <span className="flex items-center justify-between mb-1">
+                          <span className="text-xs font-mono opacity-70">
+                            {formatAddress(message.sender.address)}
+                            {message.sender.displayName && (
+                              <span className="ml-1 opacity-70">({message.sender.displayName})</span>
+                            )}
+                          </span>
+                          <span
+                            className="text-[10px] px-1.5 py-0.5 rounded-full"
+                            style={{
+                              background: parseFloat(message.paymentAmount) > 10 
+                                ? `${primaryColor}90`
+                                : parseFloat(message.paymentAmount) > 0
+                                ? `${primaryColor}70`
+                                : `${primaryColor}50`,
+                              color: 'white'
+                            }}
+                          >
+                            {message.paymentAmount} {tokenSymbol}
+                          </span>
+                        </span>
+                        {message.text}
+                      </div>
+                      <div className="flex justify-end items-center text-xs text-white/60">
+                        <div className="flex items-center">
+                          <Clock size={10} className="mr-1" />
+                          <span>{getRemainingTime(message.expiresAt)}</span>
+                        </div>
+                      </div>
+                    </motion.div>
+                  ))
+              )}
+              
+              {/* Divider between wall messages and user transactions */}
+              {userTransactions.length > 0 && wallMessages.filter(msg => msg.text.trim() !== '').length > 0 && (
+                <div className="flex items-center my-2">
+                  <div className="flex-grow h-px bg-white/10"></div>
+                  <div className="px-2 text-xs text-white/40">Your Messages</div>
+                  <div className="flex-grow h-px bg-white/10"></div>
+                </div>
+              )}
+              
+              {/* User's own transactions */}
+              {userTransactions.length > 0 && (
+                userTransactions.map((message) => (
                   <motion.div
                     key={message.id}
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0 }}
                     transition={{ duration: 0.2 }}
-                    className={`rounded-lg p-2 border ${message.id === lastMessageId ? 'ring-2' : ''}`}
-                    style={{ 
-                      background: parseFloat(message.paymentAmount) > 10 
-                        ? `linear-gradient(to right, ${primaryColor}25, ${secondaryColor}25)` 
-                        : parseFloat(message.paymentAmount) > 0
-                        ? `linear-gradient(to right, ${primaryColor}15, ${secondaryColor}15)`
-                        : 'rgba(0, 0, 0, 0.4)',
-                      borderColor: parseFloat(message.paymentAmount) > 10
-                        ? `${primaryColor}40` 
-                        : parseFloat(message.paymentAmount) > 0
-                        ? `${primaryColor}30`
-                        : 'rgba(255, 255, 255, 0.1)',
-                      ...(message.id === lastMessageId ? { '--ring-color': primaryColor } : {})
-                    }}
+                    className="rounded-lg p-2 border border-white/20 bg-white/5"
                   >
                     <div className="text-sm text-white leading-tight mb-1">
                       <span className="flex items-center justify-between mb-1">
-                        <span className="text-xs font-mono opacity-70">
-                          {formatAddress(message.sender.address)}
-                          {message.sender.displayName && (
-                            <span className="ml-1 opacity-70">({message.sender.displayName})</span>
-                          )}
+                        <span className="text-xs font-medium text-white/80">
+                          Your Message
                         </span>
                         <span
                           className="text-[10px] px-1.5 py-0.5 rounded-full"
                           style={{
-                            background: parseFloat(message.paymentAmount) > 10 
-                              ? `${primaryColor}90`
-                              : parseFloat(message.paymentAmount) > 0
-                              ? `${primaryColor}70`
-                              : `${primaryColor}50`,
+                            background: `${primaryColor}70`,
                             color: 'white'
                           }}
                         >
@@ -521,7 +670,7 @@ export default function EphemeralChat() {
         )}
       </AnimatePresence>
 
-      {/* Input area */}
+      {/* Input area - only show in expanded mode */}
       <AnimatePresence>
         {isExpanded && (
           <motion.div

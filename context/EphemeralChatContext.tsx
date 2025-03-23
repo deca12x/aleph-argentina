@@ -224,7 +224,27 @@ export function EphemeralChatProvider({ children }: { children: ReactNode }) {
       };
       
       // Add to messages array
-      setMessages(prev => [...prev, botMessage]);
+      setMessages(prev => {
+        // If wall is getting full, remove older bot messages
+        let updatedMessages = [...prev];
+        const botCount = updatedMessages.filter(msg => 
+          msg.sender.displayName === "AlephBot" || msg.sender.displayName === "AlephBot Premium"
+        ).length;
+        
+        // If we have a lot of bot messages, start removing the oldest ones
+        if (botCount > 10) {
+          // Find the oldest bot message
+          const oldestBotIndex = updatedMessages.findIndex(msg => 
+            msg.sender.displayName === "AlephBot" || msg.sender.displayName === "AlephBot Premium"
+          );
+          
+          if (oldestBotIndex !== -1) {
+            updatedMessages.splice(oldestBotIndex, 1);
+          }
+        }
+        
+        return [...updatedMessages, botMessage];
+      });
     };
     
     // Create a bot message every 2-5 seconds
