@@ -11,52 +11,52 @@ const locations = [
     id: 1,
     name: "Aleph Hub",
     address: "Concepción Arenal 2989, C1426DGG, Cdad. Autónoma de Buenos Aires",
-    description: "Main gathering point for Web3 enthusiasts in Buenos Aires. Features coworking spaces, event areas, and networking lounges.",
+    description: "Home to our flagship 3D NFT Easter egg. Discover this digital collectible anchored to a real-world coordinate, visible only through your phone.",
     image: "/locations/aleph-hub-location.webp",
     qrCodeImage: "/locations/aleph-hub-8code.png",
     googleMapsUrl: "https://www.google.com/maps/place/Aleph+Hub/data=!4m2!3m1!1s0x0:0x3a22d7994f3ff7ec?sa=X&ved=1t:2428&ictx=111",
-    tags: ["Coworking", "Events", "Cafe"],
+    tags: ["3D NFT", "Collectible", "AR Experience"],
     specialFeature: {
-      title: "3D IRL NFT Wall Experience",
-      description: "Discover the revolutionary 3D NFT Wall at Aleph Hub powered by Mantle! Interact with physical digital art and scan QR codes to unlock exclusive rewards, limited NFT drops, and special access to future Mantle events. Be among the first to experience this groundbreaking fusion of physical and digital art!",
-      cta: "Visit Aleph Hub to claim your rewards"
+      title: "3D Easter Egg Collectible",
+      description: "Step into the world of 3D NFT collectibles at Aleph Hub powered by Mantle! Scan the QR code when you arrive to reveal a unique 3D NFT anchored to this exact location. This exclusive digital art piece exists only in this physical space and can be collected and owned only by those who visit in person!",
+      cta: "Visit to collect this 3D NFT"
     }
   },
   {
     id: 2,
     name: "Mantle Blockchain Hub",
     address: "San Martín 344, Buenos Aires, Argentina",
-    description: "Technology center focused on Mantle blockchain development, with workshops, hackathons, and technical talks.",
+    description: "Find the hidden Mantle Alien Race NFT anchored to this location. Scan the QR code on site to reveal and claim this exclusive 3D digital asset.",
     image: "/boys-nft-collection/image (1).webp",
     googleMapsUrl: "https://maps.google.com/?q=-34.6037,-58.3816",
-    tags: ["Development", "Education", "Networking"]
+    tags: ["Alien Race NFT", "Limited Edition", "GPS-Locked"]
   },
   {
     id: 3,
     name: "Crypto Art Gallery",
     address: "Defensa 791, San Telmo, Buenos Aires, Argentina",
-    description: "An exclusive gallery showcasing NFT art with physical representations and immersive digital experiences.",
+    description: "Home to a mysterious Mantle Crystal 3D NFT. Visit this location to discover a rare digital collectible that can only be seen and claimed at these coordinates.",
     image: "/boys-nft-collection/image (2).webp",
     googleMapsUrl: "https://maps.google.com/?q=-34.6173,-58.3722",
-    tags: ["Art", "NFTs", "Culture"]
+    tags: ["Crystal NFT", "Rare Find", "Location-Based"]
   },
   {
     id: 4,
     name: "Web3 Palermo Social Club",
     address: "Guatemala 4699, Buenos Aires, Argentina",
-    description: "A social space for crypto enthusiasts to connect, collaborate, and share ideas in a relaxed environment.",
+    description: "A special Jelly Army 3D NFT is hiding at this location. Visit in person and use your phone's camera to reveal this exclusive digital treasure.",
     image: "/boys-nft-collection/image (3).webp",
     googleMapsUrl: "https://maps.google.com/?q=-34.5862,-58.4241",
-    tags: ["Social", "Networking", "Bar"]
+    tags: ["Jelly Army", "Digital Treasure", "AR Collectible"]
   },
   {
     id: 5,
     name: "DeFi Conference Center",
     address: "Av. Corrientes 1234, Buenos Aires, Argentina",
-    description: "Dedicated venue for decentralized finance discussions, hosting regular meetups and international conferences.",
+    description: "Seek out the legendary Mantle Boy 3D NFT anchored to this physical location. This digital asset only reveals itself to visitors who scan the QR code on site.",
     image: "/boys-nft-collection/image.webp",
     googleMapsUrl: "https://maps.google.com/?q=-34.6037,-58.3917",
-    tags: ["Conference", "Finance", "Education"]
+    tags: ["Mantle Boy", "Legendary NFT", "Location-Based"]
   }
 ];
 
@@ -96,9 +96,10 @@ export default function RealLifeView() {
       
       <div className="container relative z-10 mx-auto px-4 pt-24 h-full flex flex-col">
         <div className="text-center mb-8">
-          <h2 className="text-4xl md:text-6xl font-bold mb-4 font-megazoid">Real Life</h2>
+          <h2 className="text-4xl md:text-6xl font-bold mb-4 font-megazoid">Real Life Easter Eggs</h2>
           <p className="text-lg text-gray-400 max-w-2xl mx-auto font-greed">
-            This is reality - everything you see here is actually happening.
+            Discover hidden 3D NFTs anchored to physical GPS coordinates throughout the city. 
+            Each one is a unique digital treasure waiting to be found and claimed.
           </p>
         </div>
 
@@ -118,20 +119,20 @@ export default function RealLifeView() {
             <div className="relative z-10">
               <h3 className="text-2xl font-bold mb-4 font-greed">Welcome to Reality</h3>
               <p className="text-gray-300 mb-4 font-greed">
-                In this view, you're seeing things as they truly are. No illusions, no digital constructs - just pure reality.
+                In this view, you can discover hidden digital treasures in the real world. We've anchored 3D NFTs to specific GPS locations throughout the city.
               </p>
               <p className="text-gray-300 font-greed">
-                Connect with other real beings and experience the authentic world around you. The choices you make here have real consequences.
+                Find these Easter eggs to unlock exclusive rewards and experiences. Use your phone's camera to scan the QR codes at each location and claim unique digital collectibles that bridge the virtual and physical worlds.
               </p>
             </div>
           </div>
 
-          {/* Locations card */}
+          {/* Easter Eggs card */}
           <div className="bg-black/50 backdrop-blur-lg rounded-xl border border-white/10 flex flex-col overflow-hidden">
             <div className="p-6">
-              <h3 className="text-2xl font-bold mb-2 font-greed">Locations</h3>
+              <h3 className="text-2xl font-bold mb-2 font-greed">Easter Eggs</h3>
               <p className="text-gray-300 text-sm mb-4">
-                Discover real-world locations where the community gathers.
+                Discover 3D NFTs hidden at real-world locations waiting to be claimed.
               </p>
             </div>
             

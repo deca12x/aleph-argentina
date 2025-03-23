@@ -325,7 +325,7 @@ export default function ClanPage({ params }: ClanPageProps) {
           href="https://mantle.xyz/"
           target="_blank"
           rel="noopener noreferrer"
-          className="fixed top-4 right-4 md:top-6 md:right-6 z-50 w-12 h-12 md:w-16 md:h-16 rounded-full bg-black/50 backdrop-blur-md border border-white/20 flex items-center justify-center hover:border-white/40 transition-all duration-300 shadow-lg hover:scale-105"
+          className="fixed top-20 right-4 md:top-20 md:right-30 z-50 w-12 h-12 md:w-16 md:h-16 rounded-full bg-black/50 backdrop-blur-md border border-white/20 flex items-center justify-center hover:border-white/40 transition-all duration-300 shadow-lg hover:scale-105"
           title="Visit Mantle Website"
         >
           <div className="relative w-8 h-8 md:w-10 md:h-10">
