@@ -74,7 +74,7 @@ const urbeCollections: Collection[] = [
     id: 1,
     title: "City Architecture",
     subtitle: "Urban Design",
-    imageSrc: "", // Empty image
+    imageSrc: "/urbe/ethrome.webp",
     bgColor: "bg-blue-500/20",
     link: "https://mintle.app/section/art_projects",
   },
@@ -82,7 +82,7 @@ const urbeCollections: Collection[] = [
     id: 2,
     title: "Urban Mobility",
     subtitle: "Transportation",
-    imageSrc: "", // Empty image
+    imageSrc: "/urbe/PXL_20240712_160302665.webp",
     bgColor: "bg-purple-500/20",
     link: "https://mintle.app/section/art_projects",
   },
@@ -90,7 +90,7 @@ const urbeCollections: Collection[] = [
     id: 3,
     title: "City Planning",
     subtitle: "Development",
-    imageSrc: "", // Empty image
+    imageSrc: "/urbe/beefy.webp",
     bgColor: "bg-green-500/20",
     link: "https://mintle.app/section/art_projects",
   },
@@ -98,7 +98,7 @@ const urbeCollections: Collection[] = [
     id: 4,
     title: "Smart Cities",
     subtitle: "Technology",
-    imageSrc: "", // Empty image
+    imageSrc: "/urbe/village.webp",
     bgColor: "bg-yellow-500/20",
     link: "https://mintle.app/section/art_projects",
   },
@@ -110,7 +110,7 @@ const zkSyncCollections: Collection[] = [
     id: 1,
     title: "Zero Knowledge",
     subtitle: "Cryptography",
-    imageSrc: "", // Empty image
+    imageSrc: "/zksync/ec64396d-34d1-44ac-8de5-8dffff05013a.webp",
     bgColor: "bg-purple-500/20",
     link: "https://mintle.app/section/art_projects",
   },
@@ -118,7 +118,7 @@ const zkSyncCollections: Collection[] = [
     id: 2,
     title: "Private Transactions",
     subtitle: "Security",
-    imageSrc: "", // Empty image
+    imageSrc: "/zksync/3b579d3b-3027-4f61-82b9-016bb1890385.webp",
     bgColor: "bg-indigo-500/20",
     link: "https://mintle.app/section/art_projects",
   },
@@ -126,7 +126,7 @@ const zkSyncCollections: Collection[] = [
     id: 3,
     title: "Scaling Solutions",
     subtitle: "Performance",
-    imageSrc: "", // Empty image
+    imageSrc: "/zksync/b5462957-8306-46d3-acc8-320bdf21cfc6.webp",
     bgColor: "bg-fuchsia-500/20",
     link: "https://mintle.app/section/art_projects",
   },
@@ -134,7 +134,7 @@ const zkSyncCollections: Collection[] = [
     id: 4,
     title: "ZK Applications",
     subtitle: "Development",
-    imageSrc: "", // Empty image
+    imageSrc: "/zksync/zksync-logo.webp",
     bgColor: "bg-violet-500/20",
     link: "https://mintle.app/section/art_projects",
   },
@@ -146,7 +146,7 @@ const crecimientoCollections: Collection[] = [
     id: 1,
     title: "Sustainable Growth",
     subtitle: "Environment",
-    imageSrc: "", // Empty image
+    imageSrc: "/events/dmeoday1.png",
     bgColor: "bg-green-500/20",
     link: "https://mintle.app/section/art_projects",
   },
@@ -154,7 +154,7 @@ const crecimientoCollections: Collection[] = [
     id: 2,
     title: "Regenerative Systems",
     subtitle: "Ecosystem",
-    imageSrc: "", // Empty image
+    imageSrc: "/events/foundermode.png",
     bgColor: "bg-emerald-500/20",
     link: "https://mintle.app/section/art_projects",
   },
@@ -162,7 +162,7 @@ const crecimientoCollections: Collection[] = [
     id: 3,
     title: "Green Technology",
     subtitle: "Innovation",
-    imageSrc: "", // Empty image
+    imageSrc: "/events/asado-mantle.png",
     bgColor: "bg-lime-500/20",
     link: "https://mintle.app/section/art_projects",
   },
@@ -170,7 +170,7 @@ const crecimientoCollections: Collection[] = [
     id: 4,
     title: "Community Development",
     subtitle: "Social Impact",
-    imageSrc: "", // Empty image
+    imageSrc: "/events/sozubbq.png",
     bgColor: "bg-teal-500/20",
     link: "https://mintle.app/section/art_projects",
   },
@@ -182,7 +182,7 @@ const alephCollections: Collection[] = [
     id: 1,
     title: "Data Networks",
     subtitle: "Infrastructure",
-    imageSrc: "", // Empty image
+    imageSrc: "/aleph/377adb8b-ef95-4620-b657-0abab5cae618.webp",
     bgColor: "bg-gray-500/20",
     link: "https://mintle.app/section/art_projects",
   },
@@ -190,7 +190,7 @@ const alephCollections: Collection[] = [
     id: 2,
     title: "Distributed Computing",
     subtitle: "Technology",
-    imageSrc: "", // Empty image
+    imageSrc: "/aleph/0f17355c-c5ce-49f0-86b6-bc2109e1ee5d.webp",
     bgColor: "bg-slate-500/20",
     link: "https://mintle.app/section/art_projects",
   },
@@ -198,7 +198,7 @@ const alephCollections: Collection[] = [
     id: 3,
     title: "Decentralized Storage",
     subtitle: "Data Solutions",
-    imageSrc: "", // Empty image
+    imageSrc: "/aleph/a2d2c4c5-4f0c-4269-bf1b-d134fcddaee3.webp",
     bgColor: "bg-zinc-500/20",
     link: "https://mintle.app/section/art_projects",
   },
@@ -206,7 +206,7 @@ const alephCollections: Collection[] = [
     id: 4,
     title: "Node Network",
     subtitle: "Connectivity",
-    imageSrc: "", // Empty image
+    imageSrc: "/aleph/9d016266-9d4d-4dbd-996f-26d60b0d5712.webp",
     bgColor: "bg-stone-500/20",
     link: "https://mintle.app/section/art_projects",
   },
