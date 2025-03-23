@@ -1,38 +1,44 @@
-import { useState, useEffect } from 'react';
+import { useAccount, useReadContract, useChainId } from "wagmi";
+import { parseAbiItem } from "viem";
+import { mantleMainnet } from "@/components/providers";
 
-export function useCitizensOfMantleNFT() {
-  const [hasNFT, setHasNFT] = useState<boolean>(false);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [isError, setIsError] = useState<boolean>(false);
-  const [isWrongNetwork, setIsWrongNetwork] = useState<boolean>(false);
+// NFT Collection Addresses
+export const NFT_ADDRESSES = {
+  CITIZENS_OF_MANTLE: "0x7cf4ac414c94e03ecb2a7d6ea8f79087453caef0",
+} as const;
 
-  useEffect(() => {
-    // Simulate checking for NFT ownership
-    const checkNFTOwnership = async () => {
-      try {
-        setIsLoading(true);
-        // In a real implementation, this would check if the user owns the NFT
-        // For now, we'll just simulate this check
-        
-        // Simulate a network check
-        const isCorrectNetwork = true; // Would check the current network
-        setIsWrongNetwork(!isCorrectNetwork);
-        
-        // Simulate NFT ownership check
-        const ownsNFT = false; // Default to false for now
-        setHasNFT(ownsNFT);
-        
-        setIsError(false);
-      } catch (error) {
-        console.error("Error checking NFT ownership:", error);
-        setIsError(true);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+// Basic ERC721 ABI with just the balanceOf function
+const erc721Abi = [
+  parseAbiItem("function balanceOf(address owner) view returns (uint256)"),
+] as const;
 
-    checkNFTOwnership();
-  }, []);
+// Hook to check if user owns NFTs from a specific collection
+export const useNFTOwnership = (collectionAddress: `0x${string}`) => {
+  const { address } = useAccount();
+  const chainId = useChainId();
 
-  return { hasNFT, isLoading, isError, isWrongNetwork };
-} 
+  const {
+    data: balance,
+    isLoading,
+    isError,
+  } = useReadContract({
+    address: collectionAddress,
+    abi: erc721Abi,
+    functionName: "balanceOf",
+    args: address ? [address] : undefined,
+  });
+
+  const isWrongNetwork = chainId !== mantleMainnet.id;
+
+  return {
+    hasNFT: balance ? Number(balance) > 0 : false,
+    isLoading,
+    isError,
+    isWrongNetwork,
+  };
+};
+
+// Specific hook for Citizens of Mantle NFT
+export const useCitizensOfMantleNFT = () => {
+  return useNFTOwnership(NFT_ADDRESSES.CITIZENS_OF_MANTLE as `0x${string}`);
+};
