@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { usePrivy } from '@privy-io/react-auth'
-import { Send, Clock, X } from 'lucide-react'
+import { Send, Clock, X, CheckCircle2, Loader2 } from 'lucide-react'
 import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { useEphemeralChat } from '@/context/EphemeralChatContext'
@@ -22,6 +22,9 @@ export interface EphemeralMessage {
   tier: 'basic' | 'standard' | 'premium'
 }
 
+// Transaction status type
+type TransactionStatus = 'idle' | 'pending' | 'confirming' | 'success' | 'error';
+
 export default function EphemeralChat() {
   const { messages, sendMessage, tierDurations, tierPricing } = useEphemeralChat()
   const [inputMessage, setInputMessage] = useState('')
@@ -29,6 +32,8 @@ export default function EphemeralChat() {
   const [showTierSelector, setShowTierSelector] = useState(false)
   const [selectedTier, setSelectedTier] = useState<'basic' | 'standard' | 'premium'>('basic')
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [txStatus, setTxStatus] = useState<TransactionStatus>('idle')
+  const [lastMessageId, setLastMessageId] = useState<string | null>(null)
   const chatContainerRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLTextAreaElement>(null)
   const { user, authenticated, login } = usePrivy()
@@ -95,20 +100,54 @@ export default function EphemeralChat() {
     if (!inputMessage.trim() || !authenticated || isSubmitting) return
 
     setIsSubmitting(true)
+    setTxStatus('pending')
     
     try {
+      // First send to ephemeral chat
       const success = await sendMessage(inputMessage.trim(), selectedTier)
       
       if (success) {
+        // Find the message we just sent
+        const msgId = messages[messages.length - 1]?.id || crypto.randomUUID()
+        setLastMessageId(msgId)
+        
+        // Simulate blockchain transaction
+        setTxStatus('confirming')
+        
+        // Simulate blockchain confirmation (3-5 seconds)
+        setTimeout(() => {
+          // Dispatch event to add message to the public wall
+          window.dispatchEvent(new CustomEvent('newBlockchainMessage', { 
+            detail: {
+              id: msgId,
+              text: inputMessage.trim(),
+              sender: user?.wallet?.address || 'unknown',
+              displayName: user?.email?.address,
+              clan: clanId,
+              tier: selectedTier
+            }
+          }))
+          
+          setTxStatus('success')
+          
+          // Reset after 5 seconds
+          setTimeout(() => {
+            setTxStatus('idle')
+            setLastMessageId(null)
+          }, 5000)
+        }, 3000 + Math.random() * 2000)
+        
         setInputMessage('')
         setShowTierSelector(false)
         setSelectedTier('basic') // Reset to basic tier after sending
       } else {
-        // Handle failed message sending - could show error message
-        console.error('Failed to send message')
+        setTxStatus('error')
+        setTimeout(() => setTxStatus('idle'), 4000)
       }
     } catch (error) {
       console.error('Error sending message:', error)
+      setTxStatus('error')
+      setTimeout(() => setTxStatus('idle'), 4000)
     } finally {
       setIsSubmitting(false)
     }
@@ -144,6 +183,57 @@ export default function EphemeralChat() {
         isExpanded ? 'w-[320px] md:w-[420px] shadow-2xl' : 'w-[280px] md:w-[320px] shadow-lg'
       }`}
     >
+      {/* Transaction Status Indicator */}
+      <AnimatePresence>
+        {txStatus !== 'idle' && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 10 }}
+            className="absolute -top-16 left-0 right-0 rounded-lg p-3 backdrop-blur-md border"
+            style={{ 
+              background: txStatus === 'success' 
+                ? `linear-gradient(to right, ${primaryColor}40, ${secondaryColor}40)` 
+                : txStatus === 'error'
+                ? 'rgba(220, 38, 38, 0.2)'
+                : 'rgba(0, 0, 0, 0.6)',
+              borderColor: txStatus === 'success' 
+                ? `${primaryColor}70` 
+                : txStatus === 'error'
+                ? 'rgba(220, 38, 38, 0.4)'
+                : 'rgba(255, 255, 255, 0.1)'
+            }}
+          >
+            <div className="flex items-center text-white">
+              {txStatus === 'pending' && (
+                <>
+                  <Loader2 size={18} className="mr-2 animate-spin" />
+                  <span>Preparing transaction...</span>
+                </>
+              )}
+              {txStatus === 'confirming' && (
+                <>
+                  <Loader2 size={18} className="mr-2 animate-spin" />
+                  <span>Writing to blockchain...</span>
+                </>
+              )}
+              {txStatus === 'success' && (
+                <>
+                  <CheckCircle2 size={18} className="mr-2" />
+                  <span>Message posted to wall!</span>
+                </>
+              )}
+              {txStatus === 'error' && (
+                <>
+                  <X size={18} className="mr-2" />
+                  <span>Transaction failed</span>
+                </>
+              )}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Header */}
       <div 
         style={{ 
@@ -197,7 +287,7 @@ export default function EphemeralChat() {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0 }}
                     transition={{ duration: 0.2 }}
-                    className="rounded-lg p-2 border"
+                    className={`rounded-lg p-2 border ${message.id === lastMessageId ? 'ring-2' : ''}`}
                     style={{ 
                       background: message.tier === 'premium' 
                         ? `linear-gradient(to right, ${primaryColor}25, ${secondaryColor}25)` 
@@ -208,7 +298,8 @@ export default function EphemeralChat() {
                         ? `${primaryColor}40` 
                         : message.tier === 'standard'
                         ? `${primaryColor}30`
-                        : 'rgba(255, 255, 255, 0.1)'
+                        : 'rgba(255, 255, 255, 0.1)',
+                      ...(message.id === lastMessageId ? { '--ring-color': primaryColor } : {})
                     }}
                   >
                     <div className="text-sm text-white leading-tight mb-1">
@@ -234,6 +325,36 @@ export default function EphemeralChat() {
                         </span>
                       </span>
                       {message.text}
+                      
+                      {/* Transaction status indicator for actively processing messages */}
+                      {message.id === lastMessageId && txStatus !== 'idle' && (
+                        <div className="text-xs mt-1 flex items-center">
+                          {txStatus === 'pending' && (
+                            <span className="text-blue-300 flex items-center">
+                              <Loader2 size={10} className="mr-1 animate-spin" />
+                              Preparing...
+                            </span>
+                          )}
+                          {txStatus === 'confirming' && (
+                            <span className="text-yellow-300 flex items-center">
+                              <Loader2 size={10} className="mr-1 animate-spin" />
+                              Writing to chain...
+                            </span>
+                          )}
+                          {txStatus === 'success' && (
+                            <span className="text-green-300 flex items-center">
+                              <CheckCircle2 size={10} className="mr-1" />
+                              Posted to wall!
+                            </span>
+                          )}
+                          {txStatus === 'error' && (
+                            <span className="text-red-300 flex items-center">
+                              <X size={10} className="mr-1" />
+                              Failed
+                            </span>
+                          )}
+                        </div>
+                      )}
                     </div>
                     <div className="flex justify-end items-center text-xs text-white/60">
                       <div className="flex items-center">
@@ -280,12 +401,13 @@ export default function EphemeralChat() {
                         }
                       }
                     }}
-                    disabled={isSubmitting}
+                    disabled={isSubmitting || txStatus === 'confirming'}
+                    maxLength={140} // Limit message length
                   />
                   <button
-                    className={`ml-2 bg-white/10 ${isSubmitting ? 'opacity-50 cursor-not-allowed' : 'hover:bg-white/20 cursor-pointer'} text-white p-2 rounded-lg transition-colors`}
+                    className={`ml-2 bg-white/10 ${isSubmitting || txStatus === 'confirming' ? 'opacity-50 cursor-not-allowed' : 'hover:bg-white/20 cursor-pointer'} text-white p-2 rounded-lg transition-colors`}
                     onClick={() => inputMessage.trim() && setShowTierSelector(true)}
-                    disabled={isSubmitting}
+                    disabled={isSubmitting || txStatus === 'confirming'}
                   >
                     <Send size={16} />
                   </button>
@@ -312,7 +434,7 @@ export default function EphemeralChat() {
                           background: `linear-gradient(to right, ${primaryColor}30, ${secondaryColor}30)` 
                         } : {}}
                         onClick={() => setSelectedTier('basic')}
-                        disabled={isSubmitting}
+                        disabled={isSubmitting || txStatus === 'confirming'}
                       >
                         Basic<br/>({tierDurations.basic} min)
                       </button>
@@ -326,7 +448,7 @@ export default function EphemeralChat() {
                           background: `linear-gradient(to right, ${primaryColor}30, ${secondaryColor}30)` 
                         } : {}}
                         onClick={() => setSelectedTier('standard')}
-                        disabled={isSubmitting}
+                        disabled={isSubmitting || txStatus === 'confirming'}
                       >
                         Standard<br/>({tierDurations.standard} min)
                       </button>
@@ -340,7 +462,7 @@ export default function EphemeralChat() {
                           background: `linear-gradient(to right, ${primaryColor}30, ${secondaryColor}30)` 
                         } : {}}
                         onClick={() => setSelectedTier('premium')}
-                        disabled={isSubmitting}
+                        disabled={isSubmitting || txStatus === 'confirming'}
                       >
                         Premium<br/>({tierDurations.premium} min)
                       </button>
@@ -352,7 +474,7 @@ export default function EphemeralChat() {
                       <button
                         className="flex-1 bg-white/10 hover:bg-white/20 text-white py-1 rounded text-xs transition-colors"
                         onClick={() => setShowTierSelector(false)}
-                        disabled={isSubmitting}
+                        disabled={isSubmitting || txStatus === 'confirming'}
                       >
                         Cancel
                       </button>
@@ -360,13 +482,13 @@ export default function EphemeralChat() {
                         className="flex-1 text-white py-1 rounded text-xs transition-colors"
                         style={{ 
                           background: `linear-gradient(to right, ${primaryColor}, ${secondaryColor})`,
-                          opacity: isSubmitting ? 0.7 : 1,
-                          cursor: isSubmitting ? 'wait' : 'pointer'
+                          opacity: isSubmitting || txStatus === 'confirming' ? 0.7 : 1,
+                          cursor: isSubmitting || txStatus === 'confirming' ? 'wait' : 'pointer'
                         }}
                         onClick={handleSendMessage}
-                        disabled={isSubmitting}
+                        disabled={isSubmitting || txStatus === 'confirming'}
                       >
-                        {isSubmitting ? 'Sending...' : 'Send Message'}
+                        {isSubmitting ? 'Sending...' : txStatus === 'confirming' ? 'Processing...' : 'Send Message'}
                       </button>
                     </div>
                   </div>
