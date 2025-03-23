@@ -5,12 +5,13 @@ export const clans: Clan[] = [
     id: "crecimiento",
     name: "Crecimiento",
     poapIds: [],
+    websiteUrl: "https://crecimiento.build/",
     visualProperties: {
       primaryColor: "#4CAF50",
       secondaryColor: "#8BC34A",
       backgroundImage: "/zksync/b5462957-8306-46d3-acc8-320bdf21cfc6.webp", // Use zksync images for crecimiento (growth)
       cardBackgroundImage: "/zksync/ec64396d-34d1-44ac-8de5-8dffff05013a.webp",
-      logoImage: "/icons/growth-logo.png"
+      logoImage: "/icons/white-sun.png"
     }
   },
   {
@@ -28,6 +29,7 @@ export const clans: Clan[] = [
       "175582",
       "175491",
     ],
+    websiteUrl: "https://urbe.build/",
     visualProperties: {
       primaryColor: "#2196F3",
       secondaryColor: "#03A9F4",
@@ -40,6 +42,7 @@ export const clans: Clan[] = [
     id: "zksync",
     name: "zkSync",
     poapIds: [],
+    websiteUrl: "https://www.zksync.io/",
     visualProperties: {
       primaryColor: "#9C27B0",
       secondaryColor: "#E040FB",
@@ -61,6 +64,7 @@ export const clans: Clan[] = [
       "183425",
       "183020",
     ],
+    websiteUrl: "https://www.mantle.xyz/",
     visualProperties: {
       primaryColor: "#FF5722",
       secondaryColor: "#FF9800",
@@ -73,6 +77,7 @@ export const clans: Clan[] = [
     id: "aleph",
     name: "Aleph",
     poapIds: [],
+    websiteUrl: "https://aleph.im/",
     visualProperties: {
       primaryColor: "#607D8B",
       secondaryColor: "#90A4AE",

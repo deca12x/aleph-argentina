@@ -520,13 +520,13 @@ export default function ClanPage({ params }: ClanPageProps) {
   // Get the colors from the clan's visual properties
   const primaryColor = clan.visualProperties?.primaryColor || "#FF5722";
   const secondaryColor = clan.visualProperties?.secondaryColor || "#FF9800";
-  const logoImage = clan.visualProperties?.logoImage || "/icons/mantle-mnt-logo (1).png";
+  const logoImage = clan.visualProperties?.logoImage || "/icons/aleph-logo.png";
 
   return (
     <main className="min-h-screen bg-black cursor-ethereum">
       {/* Clan logo button - always visible */}
       <a
-        href="https://mintle.app/section/art_projects"
+        href={clan.websiteUrl || "https://mintle.app/section/art_projects"}
         target="_blank"
         rel="noopener noreferrer"
         className="fixed top-20 right-4 md:top-20 md:right-30 z-50 w-12 h-12 md:w-16 md:h-16 rounded-full bg-black/50 backdrop-blur-md border border-white/20 flex items-center justify-center hover:border-white/40 transition-all duration-300 shadow-lg hover:scale-105"
@@ -537,7 +537,7 @@ export default function ClanPage({ params }: ClanPageProps) {
             src={logoImage}
             alt={`${clan.name} Logo`}
             fill
-            className="object-contain"
+            className={clan.id === "zksync" ? "object-cover" : "object-contain"}
           />
         </div>
       </a>
@@ -628,7 +628,7 @@ export default function ClanPage({ params }: ClanPageProps) {
                   alt={`${clan.name} Logo`}
                   width={24}
                   height={24}
-                  className="w-full h-full object-contain"
+                  className={`w-full h-full ${clan.id === "zksync" ? "object-cover rounded-full" : "object-contain"}`}
                 />
               </div>
             </button>
