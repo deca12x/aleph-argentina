@@ -109,11 +109,11 @@ export default function Scene() {
       <ambientLight intensity={1} />
       <pointLight position={[10, 10, 10]} intensity={1.5} />
 
-      <ClickableBox position={[-6, 2, 0]} color="orange" href="/clans/1" />
-      <ClickableBox position={[-3, -2, 0]} color="blue" href="/clans/2" />
-      <ClickableBox position={[0, 2, 0]} color="green" href="/clans/3" />
-      <ClickableBox position={[3, -2, 0]} color="orange" href="/clans/4" />
-      <ClickableBox position={[6, 2, 0]} color="blue" href="/clans/5" />
+      <ClickableBox position={[-6, 2, 0]} color="orange" href="/clans/clan1" />
+      <ClickableBox position={[-3, -2, 0]} color="blue" href="/clans/clan2" />
+      <ClickableBox position={[0, 2, 0]} color="green" href="/clans/clan3" />
+      <ClickableBox position={[3, -2, 0]} color="orange" href="/clans/clan4" />
+      <ClickableBox position={[6, 2, 0]} color="blue" href="/clans/clan5" />
 
       {/* Positioned in top-right corner */}
       <LogoutButton position={[8, 4, 0]} />

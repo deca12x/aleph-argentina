@@ -1,0 +1,4 @@
+/* Custom cursor styles */
+.cursor-ethereum {
+  cursor: url('/icons/ethereum-eth-logo.svg'), auto;
+} 
