@@ -8,8 +8,8 @@ export const clans: Clan[] = [
     visualProperties: {
       primaryColor: "#4CAF50",
       secondaryColor: "#8BC34A",
-      backgroundImage: "/mantle1.webp", // Using Mantle image as placeholder
-      cardBackgroundImage: "/mantle2.webp", // Using Mantle image as placeholder
+      backgroundImage: "/zksync/b5462957-8306-46d3-acc8-320bdf21cfc6.webp", // Use zksync images for crecimiento (growth)
+      cardBackgroundImage: "/zksync/ec64396d-34d1-44ac-8de5-8dffff05013a.webp",
       logoImage: "/icons/growth-logo.png"
     }
   },
@@ -31,9 +31,9 @@ export const clans: Clan[] = [
     visualProperties: {
       primaryColor: "#2196F3",
       secondaryColor: "#03A9F4",
-      backgroundImage: "/mantle1.webp", // Using Mantle image as placeholder
-      cardBackgroundImage: "/mantle2.webp", // Using Mantle image as placeholder
-      logoImage: "/icons/urbe-logo.png"
+      backgroundImage: "/urbe/_PLG3709.webp", // Using urbe images
+      cardBackgroundImage: "/urbe/UVmemePowerRangers.webp",
+      logoImage: "/urbe/urbe-logo.jpg"
     }
   },
   {
@@ -43,8 +43,8 @@ export const clans: Clan[] = [
     visualProperties: {
       primaryColor: "#9C27B0",
       secondaryColor: "#E040FB",
-      backgroundImage: "/mantle1.webp", // Using Mantle image as placeholder
-      cardBackgroundImage: "/mantle2.webp", // Using Mantle image as placeholder
+      backgroundImage: "/zksync/b5462957-8306-46d3-acc8-320bdf21cfc6.webp", // Using zksync images
+      cardBackgroundImage: "/zksync/ec64396d-34d1-44ac-8de5-8dffff05013a.webp",
       logoImage: "/icons/zksync-logo.png"
     }
   },
@@ -76,8 +76,8 @@ export const clans: Clan[] = [
     visualProperties: {
       primaryColor: "#607D8B",
       secondaryColor: "#90A4AE",
-      backgroundImage: "/mantle1.webp", // Using Mantle image as placeholder
-      cardBackgroundImage: "/mantle2.webp", // Using Mantle image as placeholder
+      backgroundImage: "/aleph/0f17355c-c5ce-49f0-86b6-bc2109e1ee5d.webp", // Using aleph images
+      cardBackgroundImage: "/aleph/9d016266-9d4d-4dbd-996f-26d60b0d5712.webp",
       logoImage: "/icons/aleph-logo.png"
     }
   },

@@ -3,11 +3,262 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import NftCard from './NftCard';
+import { clans } from '@/lib/poapData';
 import '../styles/cursor.css'; // Import the cursor styles
 import '../styles/matrixCards.css';
 
-// Card data
+// Define functions to get card data based on clan
+const getCardData = (clanId: string) => {
+  // Default to mantle if no clan ID or invalid clan ID
+  if (!clanId || !['aleph', 'urbe', 'zksync', 'mantle', 'crecimiento'].includes(clanId)) {
+    clanId = 'mantle';
+  }
+  
+  if (clanId === 'aleph') {
+    return {
+      mainCards: [
+        {
+          id: 'card-1',
+          title: 'Aleph Image 1',
+          subtitle: 'Aleph Collection',
+          imageSrc: '/aleph/a2d2c4c5-4f0c-4269-bf1b-d134fcddaee3.webp',
+          href: 'https://aleph.im',
+          color: 'text-white border-white',
+          position: { x: 0, y: 0 }
+        },
+        {
+          id: 'card-2',
+          title: 'Aleph Image 2',
+          subtitle: 'Aleph Collection',
+          imageSrc: '/aleph/9d016266-9d4d-4dbd-996f-26d60b0d5712.webp',
+          href: 'https://aleph.im',
+          color: 'text-white border-white',
+          position: { x: 0, y: 0 }
+        },
+        {
+          id: 'card-3',
+          title: 'Aleph Image 3',
+          subtitle: 'Aleph Collection',
+          imageSrc: '/aleph/377adb8b-ef95-4620-b657-0abab5cae618.webp',
+          href: 'https://aleph.im',
+          color: 'text-white border-white',
+          position: { x: 0, y: 0 }
+        }
+      ],
+      leftCards: [
+        {
+          id: 'left-card-1',
+          title: 'Aleph Image 4',
+          subtitle: 'Aleph Collection',
+          imageSrc: '/aleph/0f17355c-c5ce-49f0-86b6-bc2109e1ee5d.webp',
+          href: 'https://aleph.im',
+          color: 'text-white border-white',
+          position: { x: 0, y: 0 }
+        },
+        {
+          id: 'left-card-2',
+          title: 'Aleph Image 1',
+          subtitle: 'Aleph Collection',
+          imageSrc: '/aleph/a2d2c4c5-4f0c-4269-bf1b-d134fcddaee3.webp',
+          href: 'https://aleph.im',
+          color: 'text-white border-white',
+          position: { x: 0, y: 0 }
+        },
+        {
+          id: 'left-card-3',
+          title: 'Aleph Image 2',
+          subtitle: 'Aleph Collection',
+          imageSrc: '/aleph/9d016266-9d4d-4dbd-996f-26d60b0d5712.webp',
+          href: 'https://aleph.im',
+          color: 'text-white border-white',
+          position: { x: 0, y: 0 }
+        }
+      ],
+      decorativeCards: Array(12).fill(null).map((_, index) => {
+        const images = [
+          '/aleph/a2d2c4c5-4f0c-4269-bf1b-d134fcddaee3.webp',
+          '/aleph/9d016266-9d4d-4dbd-996f-26d60b0d5712.webp',
+          '/aleph/377adb8b-ef95-4620-b657-0abab5cae618.webp',
+          '/aleph/0f17355c-c5ce-49f0-86b6-bc2109e1ee5d.webp'
+        ];
+        return {
+          id: `deco-${index+1}`,
+          title: `Aleph Decorative ${index+1}`,
+          imageSrc: images[index % images.length],
+          href: 'https://aleph.im',
+          position: { x: 0, y: 0 }
+        };
+      })
+    };
+  } else if (clanId === 'urbe') {
+    return {
+      mainCards: [
+        {
+          id: 'card-1',
+          title: 'Urbe Image 1',
+          subtitle: 'Urbe Collection',
+          imageSrc: '/urbe/ethrome.webp',
+          href: 'https://urbe.eth.limo',
+          color: 'text-white border-white',
+          position: { x: 0, y: 0 }
+        },
+        {
+          id: 'card-2',
+          title: 'Urbe Image 2',
+          subtitle: 'Urbe Collection',
+          imageSrc: '/urbe/beefy.webp',
+          href: 'https://urbe.eth.limo',
+          color: 'text-white border-white',
+          position: { x: 0, y: 0 }
+        },
+        {
+          id: 'card-3',
+          title: 'Urbe Image 3',
+          subtitle: 'Urbe Collection',
+          imageSrc: '/urbe/village.webp',
+          href: 'https://urbe.eth.limo',
+          color: 'text-white border-white',
+          position: { x: 0, y: 0 }
+        }
+      ],
+      leftCards: [
+        {
+          id: 'left-card-1',
+          title: 'Urbe Image 4',
+          subtitle: 'Urbe Collection',
+          imageSrc: '/urbe/walrus.webp',
+          href: 'https://urbe.eth.limo',
+          color: 'text-white border-white',
+          position: { x: 0, y: 0 }
+        },
+        {
+          id: 'left-card-2',
+          title: 'Urbe Image 5',
+          subtitle: 'Urbe Collection',
+          imageSrc: '/urbe/7cd4bf0c-5e30-4fb8-8789-4d7c13d35829.webp',
+          href: 'https://urbe.eth.limo',
+          color: 'text-white border-white',
+          position: { x: 0, y: 0 }
+        },
+        {
+          id: 'left-card-3',
+          title: 'Urbe Image 6',
+          subtitle: 'Urbe Collection',
+          imageSrc: '/urbe/b53177b1-7f33-419a-a39a-53ff87865b91.webp',
+          href: 'https://urbe.eth.limo',
+          color: 'text-white border-white',
+          position: { x: 0, y: 0 }
+        }
+      ],
+      decorativeCards: Array(12).fill(null).map((_, index) => {
+        const images = [
+          '/urbe/ethrome.webp',
+          '/urbe/beefy.webp',
+          '/urbe/village.webp',
+          '/urbe/walrus.webp',
+          '/urbe/7cd4bf0c-5e30-4fb8-8789-4d7c13d35829.webp',
+          '/urbe/b53177b1-7f33-419a-a39a-53ff87865b91.webp',
+          '/urbe/97f4465f-a784-4a3d-a73d-52e044c40210.webp',
+          '/urbe/GmRdbVFXgAAXZzx.webp',
+          '/urbe/UVmemePowerRangers.webp'
+        ];
+        return {
+          id: `deco-${index+1}`,
+          title: `Urbe Decorative ${index+1}`,
+          imageSrc: images[index % images.length],
+          href: 'https://urbe.eth.limo',
+          position: { x: 0, y: 0 }
+        };
+      })
+    };
+  } else if (clanId === 'zksync') {
+    return {
+      mainCards: [
+        {
+          id: 'card-1',
+          title: 'zkSync Image 1',
+          subtitle: 'zkSync Collection',
+          imageSrc: '/zksync/ec64396d-34d1-44ac-8de5-8dffff05013a.webp',
+          href: 'https://zksync.io',
+          color: 'text-white border-white',
+          position: { x: 0, y: 0 }
+        },
+        {
+          id: 'card-2',
+          title: 'zkSync Image 2',
+          subtitle: 'zkSync Collection',
+          imageSrc: '/zksync/b5462957-8306-46d3-acc8-320bdf21cfc6.webp',
+          href: 'https://zksync.io',
+          color: 'text-white border-white',
+          position: { x: 0, y: 0 }
+        },
+        {
+          id: 'card-3',
+          title: 'zkSync Image 3',
+          subtitle: 'zkSync Collection',
+          imageSrc: '/zksync/3b579d3b-3027-4f61-82b9-016bb1890385.webp',
+          href: 'https://zksync.io',
+          color: 'text-white border-white',
+          position: { x: 0, y: 0 }
+        }
+      ],
+      leftCards: [
+        {
+          id: 'left-card-1',
+          title: 'zkSync Image 4',
+          subtitle: 'zkSync Collection',
+          imageSrc: '/zksync/ec64396d-34d1-44ac-8de5-8dffff05013a.webp',
+          href: 'https://zksync.io',
+          color: 'text-white border-white',
+          position: { x: 0, y: 0 }
+        },
+        {
+          id: 'left-card-2',
+          title: 'zkSync Image 5',
+          subtitle: 'zkSync Collection',
+          imageSrc: '/zksync/b5462957-8306-46d3-acc8-320bdf21cfc6.webp',
+          href: 'https://zksync.io',
+          color: 'text-white border-white',
+          position: { x: 0, y: 0 }
+        },
+        {
+          id: 'left-card-3',
+          title: 'zkSync Image 6',
+          subtitle: 'zkSync Collection',
+          imageSrc: '/zksync/3b579d3b-3027-4f61-82b9-016bb1890385.webp',
+          href: 'https://zksync.io',
+          color: 'text-white border-white',
+          position: { x: 0, y: 0 }
+        }
+      ],
+      decorativeCards: Array(12).fill(null).map((_, index) => {
+        const images = [
+          '/zksync/ec64396d-34d1-44ac-8de5-8dffff05013a.webp',
+          '/zksync/b5462957-8306-46d3-acc8-320bdf21cfc6.webp',
+          '/zksync/3b579d3b-3027-4f61-82b9-016bb1890385.webp'
+        ];
+        return {
+          id: `deco-${index+1}`,
+          title: `zkSync Decorative ${index+1}`,
+          imageSrc: images[index % images.length],
+          href: 'https://zksync.io',
+          position: { x: 0, y: 0 }
+        };
+      })
+    };
+  } else {
+    // Default (mantle) cards
+    return {
+      mainCards: cards,
+      leftCards: leftCards,
+      decorativeCards: decorativeCards
+    };
+  }
+};
+
+// Original card data (mantle)
 const cards = [
   {
     id: 'card-1',
@@ -210,6 +461,16 @@ export default function MatrixView() {
   const [hoveredCardId, setHoveredCardId] = useState<string | null>(null);
   const [isMouseInside, setIsMouseInside] = useState(false);
   const [cardsVisible, setCardsVisible] = useState<{[key: string]: boolean}>({});
+  
+  const pathname = usePathname();
+  
+  // Extract clan ID from the URL path - expected format: /clans/[clanId]/*
+  const clanIdMatch = pathname.match(/\/clans\/([^/]+)/);
+  const clanId = clanIdMatch ? clanIdMatch[1] : 'mantle';
+  
+  // Get clan data and card data based on clan ID
+  const clan = clans.find(c => c.id === clanId) || clans.find(c => c.id === 'mantle')!;
+  const { mainCards, leftCards: sideCards, decorativeCards: decoCards } = getCardData(clanId);
 
   // Position cards when component mounts
   useEffect(() => {
@@ -229,10 +490,10 @@ export default function MatrixView() {
     const centerX = 0;
     const centerY = 0;
     const radius = Math.min(width, height) * mainCardsSpaceFactor;
-    const angleStep = (2 * Math.PI) / cards.length;
+    const angleStep = (2 * Math.PI) / mainCards.length;
 
     // Position main cards in a circular pattern around the center
-    const positionedCards = cards.map((card, index) => {
+    const positionedCards = mainCards.map((card, index) => {
       const angle = index * angleStep;
       const x = centerX + radius * Math.cos(angle);
       const y = centerY + radius * Math.sin(angle);
@@ -241,12 +502,12 @@ export default function MatrixView() {
 
     // Position left side cards at specific angles (left side of the circle)
     const leftRadius = Math.min(width, height) * leftCardsSpaceFactor;  
-    const leftCardsPositioned = leftCards.map((card, index) => {
+    const leftCardsPositioned = sideCards.map((card, index) => {
       // Further spread the left cards
       const angleRangeStart = 110 * (Math.PI / 180); // Adjusted from 120
       const angleRangeEnd = 250 * (Math.PI / 180); // Adjusted from 240
       const angleRange = angleRangeEnd - angleRangeStart;
-      const angle = angleRangeStart + (angleRange / (leftCards.length - 1)) * index;
+      const angle = angleRangeStart + (angleRange / (sideCards.length - 1)) * index;
       
       const x = centerX + leftRadius * Math.cos(angle);
       const y = centerY + leftRadius * Math.sin(angle);
@@ -273,8 +534,8 @@ export default function MatrixView() {
     const minDistanceBetweenCards = 150; // Minimum pixel distance between card centers
     
     // First pass: position cards with the Fibonacci spiral
-    for (let i = 0; i < decorativeCards.length; i++) {
-      const card = { ...decorativeCards[i] };
+    for (let i = 0; i < decoCards.length; i++) {
+      const card = { ...decoCards[i] };
       let attempts = 0;
       let validPosition = false;
       
@@ -336,15 +597,15 @@ export default function MatrixView() {
     }
 
     // Update all card positions
-    cards.length > 0 && (cards.forEach((card, i) => {
+    mainCards.length > 0 && (mainCards.forEach((card, i) => {
       card.position = positionedCards[i].position;
     }));
 
-    leftCards.length > 0 && (leftCards.forEach((card, i) => {
+    sideCards.length > 0 && (sideCards.forEach((card, i) => {
       card.position = leftCardsPositioned[i].position;
     }));
 
-    decorativeCards.length > 0 && (decorativeCards.forEach((card, i) => {
+    decoCards.length > 0 && (decoCards.forEach((card, i) => {
       if (decoCardsPositioned[i]) {
         card.position = decoCardsPositioned[i].position;
       }
@@ -357,14 +618,14 @@ export default function MatrixView() {
       clientX: window.innerWidth / 2,
       clientY: window.innerHeight / 2
     } as React.MouseEvent<HTMLDivElement>);
-  }, [cardsPositioned]);
+  }, [cardsPositioned, mainCards, sideCards, decoCards]);
 
   // Animate cards entrance with a staggered effect
   useEffect(() => {
     if (!cardsPositioned) return;
 
     // Create a staggered entrance for all cards
-    const allCards = [...cards, ...leftCards, ...decorativeCards];
+    const allCards = [...mainCards, ...sideCards, ...decoCards];
     
     allCards.forEach((card, index) => {
       // Stagger the appearance of cards
@@ -440,11 +701,11 @@ export default function MatrixView() {
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
-      {/* Background image with overlay */}
+      {/* Background image with overlay - use clan-specific background */}
       <div className="matrix-background">
         <Image
-          src="/mantle1.webp"
-          alt="Matrix View Background"
+          src={clan.visualProperties.backgroundImage}
+          alt={`${clan.name} Background`}
           fill
           className="matrix-background-image"
           sizes="100vw"
@@ -455,7 +716,7 @@ export default function MatrixView() {
       {/* Title */}
       <div className="matrix-title">
         <h1 className="font-megazoid">
-          Matrix
+          {clan.name} Matrix
         </h1>
       </div>
 
@@ -469,7 +730,7 @@ export default function MatrixView() {
         }}
       >
         {/* Main Cards */}
-        {cards.map((card) => (
+        {mainCards.map((card) => (
           <NftCard
             key={card.id}
             id={card.id}
@@ -488,7 +749,7 @@ export default function MatrixView() {
         ))}
 
         {/* Left Side Cards */}
-        {cardsPositioned && leftCards.map((card) => (
+        {cardsPositioned && sideCards.map((card) => (
           <NftCard
             key={card.id}
             id={card.id}
@@ -507,7 +768,7 @@ export default function MatrixView() {
         ))}
 
         {/* Decorative Cards */}
-        {cardsPositioned && decorativeCards.map((card) => {
+        {cardsPositioned && decoCards.map((card) => {
           // Calculate custom sizes for decorative cards - vary sizes more
           const isSpecialCard = card.id.includes('deco-1') || 
                                 card.id.includes('deco-5') ||
