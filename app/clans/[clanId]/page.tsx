@@ -86,7 +86,6 @@ export default function ClanPage({ params }: ClanPageProps) {
   const chainId = useChainId();
   const { switchChain } = useSwitchChain();
   const { authenticated, ready, connectWallet, user } = usePrivy();
-  const [isSwitchingChain, setIsSwitchingChain] = useState(false);
 
   // For Mantle-specific UI
   const [showDemo, setShowDemo] = useState(false);
@@ -138,9 +137,6 @@ export default function ClanPage({ params }: ClanPageProps) {
       ready
     );
 
-    // Prevent multiple rapid chain switches
-    if (isSwitchingChain) return;
-
     const initializeWallet = async () => {
       if (!switchChain || !authenticated || !ready) return;
 
@@ -153,7 +149,6 @@ export default function ClanPage({ params }: ClanPageProps) {
         chainId !== mantleMainnet.id
       ) {
         console.log(`Switching to Mantle for clan ${clan?.id}`);
-        setIsSwitchingChain(true);
         try {
           await switchChain({ chainId: mantleMainnet.id });
         } catch (error) {
@@ -167,9 +162,6 @@ export default function ClanPage({ params }: ClanPageProps) {
               );
             }
           }
-        } finally {
-          // Add a small delay to prevent rapid switches
-          setTimeout(() => setIsSwitchingChain(false), 2000);
         }
       }
       // For zkSync Clan (clan3) and Crecimiento (clan1) -> use zkSync Mainnet
@@ -178,7 +170,6 @@ export default function ClanPage({ params }: ClanPageProps) {
         chainId !== zksyncMainnet.id
       ) {
         console.log(`Switching to zkSync for clan ${clan?.id}`);
-        setIsSwitchingChain(true);
         try {
           await switchChain({ chainId: zksyncMainnet.id });
         } catch (error) {
@@ -192,23 +183,12 @@ export default function ClanPage({ params }: ClanPageProps) {
               );
             }
           }
-        } finally {
-          // Add a small delay to prevent rapid switches
-          setTimeout(() => setIsSwitchingChain(false), 2000);
         }
       }
     };
 
     initializeWallet();
-  }, [
-    clan?.id,
-    chainId,
-    switchChain,
-    authenticated,
-    ready,
-    user,
-    isSwitchingChain,
-  ]);
+  }, [clan?.id, chainId, switchChain, authenticated, ready, user]);
 
   // Function to dispatch events for chat visibility (Mantle specific)
   const dispatchChatEvent = (show: boolean) => {
@@ -539,127 +519,6 @@ export default function ClanPage({ params }: ClanPageProps) {
 
       {/* Home button */}
       <NavButton href="/" label="Back to Home" position="top-left" />
-
-      {/* Network Indicator */}
-      <div className="absolute top-8 right-8 flex flex-col items-end gap-2 z-10">
-        <div
-          className={`flex items-center gap-2 px-3 py-1.5 rounded-full ${
-            clan?.id === "clan4" || clan?.id === "clan2"
-              ? chainId === mantleMainnet.id
-                ? "bg-green-500/70"
-                : "bg-red-500/70"
-              : chainId === zksyncMainnet.id
-              ? "bg-green-500/70"
-              : "bg-red-500/70"
-          }`}
-        >
-          <div
-            className={`w-2 h-2 rounded-full ${
-              clan?.id === "clan4" || clan?.id === "clan2"
-                ? chainId === mantleMainnet.id
-                  ? "bg-green-300"
-                  : "bg-red-300"
-                : chainId === zksyncMainnet.id
-                ? "bg-green-300"
-                : "bg-red-300"
-            }`}
-          ></div>
-          <span className="text-xs text-white font-medium">
-            {clan?.id === "clan4" || clan?.id === "clan2"
-              ? chainId === mantleMainnet.id
-                ? "Connected to Mantle"
-                : "Not on Mantle"
-              : chainId === zksyncMainnet.id
-              ? "Connected to zkSync"
-              : "Not on zkSync"}
-          </span>
-        </div>
-
-        {/* Show switch button if on wrong network */}
-        {((clan?.id === "clan4" || clan?.id === "clan2") &&
-          chainId !== mantleMainnet.id) ||
-        ((clan?.id === "clan3" || clan?.id === "clan1") &&
-          chainId !== zksyncMainnet.id) ? (
-          <button
-            disabled={isSwitchingChain}
-            onClick={async () => {
-              if (!authenticated) {
-                alert("Please authenticate first");
-                return;
-              }
-
-              if (isSwitchingChain) return;
-
-              await ensureWalletConnected();
-
-              if (switchChain) {
-                setIsSwitchingChain(true);
-                const targetChainId =
-                  clan?.id === "clan4" || clan?.id === "clan2"
-                    ? mantleMainnet.id
-                    : zksyncMainnet.id;
-
-                const networkName =
-                  clan?.id === "clan4" || clan?.id === "clan2"
-                    ? "Mantle"
-                    : "zkSync";
-                console.log(
-                  `Switching to ${networkName} (Chain ID: ${targetChainId})`
-                );
-
-                try {
-                  await switchChain({ chainId: targetChainId });
-                } catch (error) {
-                  console.error(`Error switching to ${networkName}:`, error);
-                  alert(
-                    `Please switch to ${networkName} network manually in your wallet to interact with this clan.`
-                  );
-                } finally {
-                  // Add a small delay to prevent rapid switches
-                  setTimeout(() => setIsSwitchingChain(false), 2000);
-                }
-              }
-            }}
-            className={`px-3 py-1.5 ${
-              isSwitchingChain
-                ? "bg-gray-500 cursor-not-allowed"
-                : "bg-blue-600 hover:bg-blue-700 cursor-pointer"
-            } rounded-full text-xs text-white font-medium transition-colors duration-200 flex items-center gap-1.5`}
-          >
-            {isSwitchingChain ? (
-              <>
-                <svg
-                  className="animate-spin -ml-1 mr-2 h-3 w-3 text-white"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                >
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                  ></circle>
-                  <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                  ></path>
-                </svg>
-                Switching...
-              </>
-            ) : (
-              `Switch to ${
-                clan?.id === "clan4" || clan?.id === "clan2"
-                  ? "Mantle"
-                  : "zkSync"
-              }`
-            )}
-          </button>
-        ) : null}
-      </div>
 
       {/* Debug Controls - only in development */}
       {process.env.NODE_ENV === "development" && (
