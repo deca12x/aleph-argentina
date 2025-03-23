@@ -541,6 +541,7 @@ export default function ClanPage({ params }: ClanPageProps) {
             alt={`${clan.name} Logo`}
             fill
             className="object-contain"
+            sizes="(max-width: 768px) 32px, 40px"
           />
         </div>
       </a>
@@ -631,6 +632,7 @@ export default function ClanPage({ params }: ClanPageProps) {
                   width={24}
                   height={24}
                   className="w-full h-full object-contain"
+                  sizes="24px"
                 />
               </div>
             </button>

@@ -16,6 +16,23 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+      <head>
+        {/* Add a script to handle ethereum provider conflicts */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              // Prevent multiple providers from redefining window.ethereum
+              if (window.ethereum) {
+                Object.defineProperty(window, 'ethereum', {
+                  value: window.ethereum,
+                  writable: false,
+                  configurable: false
+                });
+              }
+            `
+          }}
+        />
+      </head>
       <body>
         <Providers>
           <PageTransition />
