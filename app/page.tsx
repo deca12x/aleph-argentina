@@ -74,17 +74,6 @@ export default function Home() {
         );
       })}
 
-      {/* 3D Explore Button */}
-      <Link
-        href="/explore"
-        className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-[80]
-          bg-black/50 backdrop-blur-md px-6 py-3 rounded-full
-          border border-white/30 hover:bg-white/20 transition-all duration-300
-          hover:scale-105 hover:shadow-lg hover:border-white/50 text-white text-md"
-      >
-        Explore in 3D
-      </Link>
-
       {/* Page Title */}
       <div className="absolute top-6 left-1/2 transform -translate-x-1/2 text-white text-2xl font-bold z-10">
         Welcome to Aleph Argentina
