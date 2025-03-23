@@ -403,9 +403,18 @@ export default function ClanPage({ params }: ClanPageProps) {
   useEffect(() => {
     checkWalletConnection();
     dispatchChatEvent(false);
+    
+    // Add event listener for enterSpace event from the chat component
+    const handleEnterSpace = () => {
+      // Use the existing function to enter the space
+      handleEnterSpaceClick();
+    };
+    
+    document.addEventListener('enterSpace', handleEnterSpace);
 
     return () => {
       dispatchChatEvent(true);
+      document.removeEventListener('enterSpace', handleEnterSpace);
     };
   }, [clanId]);
 
@@ -475,7 +484,7 @@ export default function ClanPage({ params }: ClanPageProps) {
   };
 
   // Handle Enter Space button click
-  const handleEnterSpace = () => {
+  const handleEnterSpaceClick = () => {
     document.body.classList.add("page-transitioning");
     setTimeout(() => {
       connectWalletAndSwitchNetwork();
@@ -601,7 +610,7 @@ export default function ClanPage({ params }: ClanPageProps) {
 
           <div className="mt-24 text-center">
             <button
-              onClick={handleEnterSpace}
+              onClick={handleEnterSpaceClick}
               className="group inline-flex items-center px-8 py-4 rounded-full text-white font-bold transition-all duration-300 shadow-lg hover:shadow-xl font-greed"
               style={{ 
                 background: `linear-gradient(to right, ${primaryColor}, ${secondaryColor})`,
