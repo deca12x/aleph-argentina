@@ -56,7 +56,7 @@ export default function UserProfileCard() {
       >
         <div className="absolute inset-0 bg-gradient-to-tr from-blue-500/20 to-purple-500/20 mix-blend-overlay"></div>
         <Image
-          src="/boys-nft-collection/image.webp"
+          src="/mantle-boys-nft-collection/image.webp"
           alt="Profile"
           fill
           className="object-cover"
