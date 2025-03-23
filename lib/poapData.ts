@@ -45,7 +45,7 @@ export const clans: Clan[] = [
       secondaryColor: "#E040FB",
       backgroundImage: "/zksync/b5462957-8306-46d3-acc8-320bdf21cfc6.webp", // Using zksync images
       cardBackgroundImage: "/zksync/ec64396d-34d1-44ac-8de5-8dffff05013a.webp",
-      logoImage: "/icons/zksync-logo.png"
+      logoImage: "/zksync/zksync-logo.webp"
     }
   },
   {
