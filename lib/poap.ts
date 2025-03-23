@@ -1,3 +1,14 @@
+"use client";
+
+import { useRouter } from "next/navigation";
+import { clans } from "@/lib/clans";
+import type { Clan } from "@/lib/types";
+import { use, useEffect } from "react";
+import Canvas3D, { SceneType } from "@/components/3d/Canvas";
+import Image from "next/image";
+import { useCitizensOfMantleNFT } from "@/lib/nft";
+import { useSwitchChain, useChainId } from "wagmi";
+
 export interface POAPEvent {
   id: number;
   name: string;
