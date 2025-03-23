@@ -553,7 +553,7 @@ export default function ClanPage({ params }: ClanPageProps) {
       </div>
 
       {/* Home button */}
-      <NavButton href="/" label="Back to Home" position="top-left" />
+      <NavButton href="/" label="Back to BA" position="top-left" />
 
       {/* Show chat messages for all clans */}
       <ChatMessages />

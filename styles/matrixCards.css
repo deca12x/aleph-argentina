@@ -1,0 +1,223 @@
+/* Matrix Card Styles */
+.matrix-container {
+  position: relative;
+  height: 100vh;
+  width: 100%;
+  overflow: hidden;
+  background-color: #111827; /* bg-gray-900 */
+}
+
+.matrix-background {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
+
+.matrix-background-image {
+  object-fit: cover;
+  opacity: 0.3;
+}
+
+.matrix-gradient-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, #000, transparent);
+  opacity: 0.9;
+}
+
+.matrix-title {
+  position: absolute;
+  top: 5rem;
+  left: 0;
+  right: 0;
+  z-index: 20;
+  text-align: center;
+  pointer-events: none;
+}
+
+.matrix-title h1 {
+  font-size: 5rem;
+  margin-bottom: 4rem;
+  color: white;
+  font-weight: bold;
+  text-shadow: 0 0 20px rgba(0, 0, 0, 0.7);
+}
+
+@media (min-width: 768px) {
+  .matrix-title h1 {
+    font-size: 6rem;
+  }
+}
+
+.matrix-canvas {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  transform-origin: center center;
+}
+
+.matrix-instructions {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.6);
+  pointer-events: none;
+  transition: opacity 0.5s ease-in-out;
+}
+
+.matrix-instructions p {
+  color: white;
+  font-size: 1.25rem;
+  text-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
+}
+
+/* Card Styles */
+.matrix-card {
+  position: absolute;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  transform-origin: center center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, opacity 0.5s ease;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+.matrix-card:hover .matrix-card-image {
+  transform: scale(1.1);
+}
+
+.matrix-card-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.matrix-card-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, #000, transparent);
+  opacity: 0.7;
+  transition: opacity 0.3s ease;
+}
+
+.matrix-card:hover .matrix-card-overlay {
+  opacity: 0.6;
+}
+
+.matrix-card-content {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  padding: 1.5rem;
+  transform: translateY(0);
+  transition: transform 0.3s ease;
+  width: 100%;
+}
+
+.matrix-card:hover .matrix-card-content {
+  transform: translateY(-5px);
+}
+
+.matrix-card-title {
+  font-size: 1.875rem;
+  font-weight: bold;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+  color: white !important; /* Force white color for all titles */
+}
+
+.matrix-card-subtitle {
+  color: white;
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+}
+
+.matrix-card-button {
+  margin-top: 1rem;
+  font-size: 0.75rem;
+  border-radius: 9999px;
+  padding: 0.25rem 1rem;
+  display: inline-block;
+  transition: all 0.3s ease;
+  background-color: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white !important; /* Force white color for all buttons */
+}
+
+.matrix-card:hover .matrix-card-button {
+  background-color: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+/* Main Card Specific Styles */
+.matrix-main-card {
+  width: 320px;
+  height: 420px;
+  top: -210px;
+  left: -160px;
+  z-index: 5;
+}
+
+.matrix-main-card .matrix-card-title {
+  font-size: 1.875rem;
+}
+
+.matrix-main-card .matrix-card-content {
+  padding: 1.5rem;
+}
+
+/* Left Card Specific Styles */
+.matrix-left-card {
+  width: 280px;
+  height: 380px;
+  top: -190px;
+  left: -140px;
+  z-index: 4;
+}
+
+.matrix-left-card .matrix-card-title {
+  font-size: 1.5rem;
+}
+
+.matrix-left-card .matrix-card-subtitle {
+  font-size: 0.75rem;
+  margin-top: 0.25rem;
+}
+
+.matrix-left-card .matrix-card-content {
+  padding: 1.25rem;
+}
+
+.matrix-left-card .matrix-card-button {
+  margin-top: 0.75rem;
+  padding: 0.25rem 0.75rem;
+}
+
+/* Decorative Card Specific Styles */
+.matrix-decorative-card {
+  z-index: 1;
+}
+
+.matrix-decorative-card .matrix-card-content {
+  padding: 0.75rem;
+}
+
+.matrix-decorative-card .matrix-card-title {
+  font-size: 1rem;
+  margin-bottom: 0.25rem;
+}
+
+.matrix-decorative-card .matrix-card-button {
+  font-size: 0.6rem;
+  padding: 0.15rem 0.6rem;
+  margin-top: 0.5rem;
+} 
