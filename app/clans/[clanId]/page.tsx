@@ -81,7 +81,13 @@ const MANTLE_NETWORK = {
 
 export default function ClanPage({ params }: ClanPageProps) {
   const router = useRouter();
-  const resolvedParams = use(params);
+  const [resolvedParams, setResolvedParams] = useState<{ clanId: string } | null>(null);
+
+useEffect(() => {
+  params.then(setResolvedParams);
+}, [params]);
+
+if (!resolvedParams) return <div>Loading...</div>;
   const chainId = useChainId();
   const { switchChain } = useSwitchChain();
 
@@ -104,13 +110,22 @@ export default function ClanPage({ params }: ClanPageProps) {
   // Auto-switch to appropriate network based on clan - using pattern from main
   useEffect(() => {
     if (!switchChain) return;
-
+  
     if (clan?.id === "clan4" && chainId !== mantleMainnet.id) {
       switchChain({ chainId: mantleMainnet.id });
     } else if (clan?.id === "clan3" && chainId !== zksyncMainnet.id) {
       switchChain({ chainId: zksyncMainnet.id });
     }
   }, [clan?.id, chainId, switchChain]);
+ 
+  if (!clan) {
+    return (
+      <div className="relative h-screen w-screen overflow-hidden flex items-center justify-center">
+        <h1 className="text-white text-3xl z-10">Clan not found</h1>
+        <div className="absolute inset-0 bg-black/60 z-0"></div>
+      </div>
+    );
+  }
   
   // Function to dispatch events for chat visibility (Mantle specific)
   const dispatchChatEvent = (show: boolean) => {
