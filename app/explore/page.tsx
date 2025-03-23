@@ -45,7 +45,7 @@ export default function ExplorePage() {
         href="/"
         className="fixed top-6 left-6 z-10 bg-black/30 backdrop-blur-md px-4 py-2 rounded-full border border-white/20 hover:bg-white/20 transition-all duration-300 hover:scale-105 hover:shadow-lg hover:border-white/40 text-white text-sm"
       >
-        Back to BA
+        Back to Home
       </Link>
 
       {/* Title */}

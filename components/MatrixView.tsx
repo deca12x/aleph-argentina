@@ -704,7 +704,7 @@ export default function MatrixView() {
       {/* Background image with overlay - use clan-specific background */}
       <div className="matrix-background">
         <Image
-          src={clan.visualProperties.backgroundImage}
+          src={clan.visualProperties?.backgroundImage || "/devconnect-background.webp"}
           alt={`${clan.name} Background`}
           fill
           className="matrix-background-image"
