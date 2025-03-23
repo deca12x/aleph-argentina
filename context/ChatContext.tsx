@@ -1,121 +1,126 @@
-"use client"
+"use client";
 
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react'
-import { io, Socket } from 'socket.io-client'
-import { usePrivy } from '@privy-io/react-auth'
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+} from "react";
+import { io, Socket } from "socket.io-client";
+import { usePrivy } from "@privy-io/react-auth";
+import {
+  useMessageStorage,
+  ContractMessage,
+} from "@/lib/contracts/useMessageStorage";
+import { useParams } from "next/navigation";
 
 // Define the message type
 export interface ChatMessage {
-  id: string
-  text: string
+  id: string;
+  text: string;
   sender: {
-    address: string
-    displayName?: string
-  }
-  timestamp: Date
+    address: string;
+    displayName?: string;
+  };
+  timestamp: Date;
 }
 
 // Define the context type
 interface ChatContextType {
-  messages: ChatMessage[]
-  sendMessage: (text: string) => void
-  loading: boolean
+  messages: ChatMessage[];
+  sendMessage: (text: string) => void;
+  loading: boolean;
 }
 
 // Create the context with a default value
 const ChatContext = createContext<ChatContextType>({
   messages: [],
   sendMessage: () => {},
-  loading: true
-})
+  loading: true,
+});
 
 // Custom hook to use the chat context
-export const useChat = () => useContext(ChatContext)
+export const useChat = () => useContext(ChatContext);
 
 // Provider component
 export function ChatProvider({ children }: { children: ReactNode }) {
-  const [socket, setSocket] = useState<Socket | null>(null)
-  const [messages, setMessages] = useState<ChatMessage[]>([])
-  const [loading, setLoading] = useState(true)
-  const { user } = usePrivy()
+  const [localMessages, setLocalMessages] = useState<ChatMessage[]>([]);
+  const [loading, setLoading] = useState(true);
+  const { user } = usePrivy();
+  const params = useParams();
 
-  // Load initial messages and set up polling
+  // Get the clanId from the route parameters
+  const clanId = (params?.clanId as string) || "default";
+
+  // Use our contract integration hook
+  const {
+    messages: contractMessages,
+    sendMessage: sendContractMessage,
+    isLoading: contractLoading,
+    error: contractError,
+  } = useMessageStorage(clanId);
+
+  // Combine local and contract messages
   useEffect(() => {
-    // First, load any stored messages from localStorage for immediate display
-    const localMessages: ChatMessage[] = JSON.parse(
-      localStorage.getItem('ephemeralChat') || '[]'
-    )
-    setMessages(localMessages)
-    
-    // Then fetch from API if available
-    const fetchMessages = async () => {
-      try {
-        const response = await fetch('/api/chat')
-        if (response.ok) {
-          const data = await response.json()
-          if (data.messages && data.messages.length) {
-            setMessages(data.messages)
-          }
-        }
-      } catch (error) {
-        console.error('Error fetching messages:', error)
-      } finally {
-        setLoading(false)
-      }
+    if (contractMessages && !contractLoading) {
+      // Convert contract messages to ChatMessage format
+      const formattedContractMessages: ChatMessage[] = contractMessages.map(
+        (msg) => ({
+          id: msg.id,
+          text: msg.text,
+          sender: msg.sender,
+          timestamp: msg.timestamp,
+        })
+      );
+
+      setLocalMessages(formattedContractMessages);
+      setLoading(false);
     }
+  }, [contractMessages, contractLoading]);
 
-    fetchMessages()
-
-    // Set up polling for new messages every 3 seconds
-    const intervalId = setInterval(fetchMessages, 3000)
-    
-    return () => clearInterval(intervalId)
-  }, [])
-
-  // Save messages to localStorage on changes
+  // Load any local messages from localStorage on initial load
   useEffect(() => {
-    if (messages.length > 0) {
-      localStorage.setItem('ephemeralChat', JSON.stringify(messages.slice(-50))) // Keep only last 50 messages
+    // Load any stored messages from localStorage for immediate display
+    const storedMessages: ChatMessage[] = JSON.parse(
+      localStorage.getItem("ephemeralChat") || "[]"
+    );
+
+    if (storedMessages.length > 0) {
+      setLocalMessages(storedMessages);
+      setLoading(false);
     }
-  }, [messages])
+  }, []);
+
+  // Save messages to localStorage when they change
+  useEffect(() => {
+    if (localMessages.length > 0) {
+      localStorage.setItem(
+        "ephemeralChat",
+        JSON.stringify(localMessages.slice(-50))
+      ); // Keep only last 50 messages
+    }
+  }, [localMessages]);
 
   // Function to send a message
   const sendMessage = async (text: string) => {
-    if (!text.trim()) return
+    if (!text.trim()) return;
 
-    const newMessage: ChatMessage = {
-      id: crypto.randomUUID(),
-      text,
-      sender: {
-        address: user?.wallet?.address || 'unknown',
-        displayName: user?.email?.address || undefined
-      },
-      timestamp: new Date()
-    }
+    // Get wallet address and display name
+    const walletAddress = user?.wallet?.address || "unknown";
+    const displayName = user?.email?.address || undefined;
 
-    // Add to local state immediately for responsiveness
-    setMessages(prev => [...prev, newMessage])
+    // Call the contract send message function
+    await sendContractMessage(text, walletAddress, displayName);
 
-    // Send to API
-    try {
-      await fetch('/api/chat', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          text: newMessage.text,
-          sender: newMessage.sender
-        })
-      })
-    } catch (error) {
-      console.error('Error sending message:', error)
-    }
-  }
+    // Note: The optimistic update is already handled in the useMessageStorage hook
+  };
 
   return (
-    <ChatContext.Provider value={{ messages, sendMessage, loading }}>
+    <ChatContext.Provider
+      value={{ messages: localMessages, sendMessage, loading }}
+    >
       {children}
     </ChatContext.Provider>
-  )
-} 
+  );
+}
