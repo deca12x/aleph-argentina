@@ -274,54 +274,19 @@ export function EphemeralChatProvider({ children }: { children: ReactNode }) {
 
   // Function to send a message
   const sendMessage = async (text: string, paymentAmount: string): Promise<boolean> => {
-    if (!text.trim() || !user?.wallet?.address) return false
+    if (!text.trim()) return false;
 
-    // Sender information
+    // Ensure we have a default sender even if user is not logged in
     const sender = {
-      address: user.wallet.address,
-      displayName: user.email?.address || undefined
-    }
+      address: user?.wallet?.address || crypto.randomUUID(),
+      displayName: user?.email?.address || undefined
+    };
 
     // Calculate expiration time based on payment amount
     const expiryMinutes = messageDuration(paymentAmount);
 
     try {
-      // Send message to API
-      const response = await fetch('/api/ephemeral-chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          text, 
-          sender, 
-          paymentAmount,
-          expiryMinutes 
-        })
-      })
-
-      if (!response.ok) {
-        throw new Error(`API returned status ${response.status}`)
-      }
-
-      const result = await response.json()
-
-      if (result.success && result.message) {
-        // Convert string dates to Date objects
-        const newMessage: EphemeralMessage = {
-          ...result.message,
-          timestamp: new Date(result.message.timestamp),
-          expiresAt: new Date(result.message.expiresAt)
-        }
-
-        // Add to local state
-        setMessages(prev => [...prev, newMessage])
-        return true
-      } else {
-        return false
-      }
-    } catch (error) {
-      console.error('Error sending message:', error)
-      
-      // Fallback to local-only if API fails
+      // Create the message locally
       const newMessage: EphemeralMessage = {
         id: crypto.randomUUID(),
         text: text.trim(),
@@ -329,13 +294,31 @@ export function EphemeralChatProvider({ children }: { children: ReactNode }) {
         timestamp: new Date(),
         expiresAt: new Date(Date.now() + expiryMinutes * 60000),
         paymentAmount
-      }
+      };
       
       // Add to local state
-      setMessages(prev => [...prev, newMessage])
+      setMessages(prev => [...prev, newMessage]);
+      
+      // Return true since we added the message successfully
+      return true;
+    } catch (error) {
+      console.error('Error sending message:', error);
+      
+      // Create a fallback message
+      const newMessage: EphemeralMessage = {
+        id: crypto.randomUUID(),
+        text: text.trim(),
+        sender,
+        timestamp: new Date(),
+        expiresAt: new Date(Date.now() + expiryMinutes * 60000),
+        paymentAmount
+      };
+      
+      // Add to local state
+      setMessages(prev => [...prev, newMessage]);
       
       // Return true since we still showed the message to the user
-      return true
+      return true;
     }
   }
 
