@@ -2,7 +2,7 @@
 
 import type React from "react";
 import { useState, useEffect, useRef } from "react";
-import { Send, X, AlertCircle } from "lucide-react";
+import { X, AlertCircle } from "lucide-react";
 import { usePrivy } from "@privy-io/react-auth";
 import { useChat } from "@/context/ChatContext";
 import { usePathname } from "next/navigation";
@@ -10,7 +10,6 @@ import Image from "next/image";
 import { useClanAccess } from "@/lib/clanAccess";
 
 export default function UserProfileCard() {
-  const [message, setMessage] = useState("");
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [showPoapMessage, setShowPoapMessage] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
@@ -64,19 +63,6 @@ export default function UserProfileCard() {
     }
   }, [clanAccess, clanIdWithPrefix, isInClanSpace, walletAddress]);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    // Only send message if user can write in this clan
-    if (message.trim() && clanAccess.canWrite) {
-      sendMessage(message.trim());
-      setMessage("");
-    } else if (!clanAccess.canWrite) {
-      // Show message about writing restrictions
-      setShowPoapMessage(true);
-    }
-  };
-
   const handleProfileClick = () => {
     if (isInClanSpace && !clanAccess.canWrite) {
       setShowPoapMessage(true);
@@ -93,155 +79,107 @@ export default function UserProfileCard() {
         zIndex: 9999,
       }}
     >
-      {/* Access Restriction Message Modal */}
-      {showPoapMessage && (
-        <div className="absolute left-0 -top-[140px] w-full p-4 rounded-[15px] backdrop-blur-[12px] border border-white/20 shadow-lg bg-black/60 z-50 text-white">
-          <div className="flex justify-between items-start">
-            <h3 className="text-lg font-bold mb-2">Access Restricted</h3>
-            <button
-              onClick={() => setShowPoapMessage(false)}
-              className="text-white/70 hover:text-white transition-colors"
-            >
-              <X size={20} />
-            </button>
-          </div>
-          <p className="text-sm text-white/80 mb-2">
-            {clanAccess.reason ||
-              "You don't have permission to post messages in this clan."}
-          </p>
-          <div className="flex gap-2 mt-3">
-            <div className="flex-1 h-1 bg-purple-500/30 rounded-full"></div>
-            <div className="flex-1 h-1 bg-blue-500/30 rounded-full"></div>
-          </div>
-        </div>
-      )}
-
       {/* Profile picture floating to the left */}
       <div
         className="absolute -left-16 md:-left-20 bottom-2 w-12 h-12 md:w-16 md:h-16 rounded-full border-2 border-white/30 overflow-hidden shadow-lg cursor-pointer hover:border-white/50 transition-all duration-300"
         style={{
           transform: `translateY(${mousePosition.y / 80}px)`,
-          boxShadow:
-            "0 0 15px rgba(255, 255, 255, 0.2), inset 0 0 8px rgba(255, 255, 255, 0.1)",
+          boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.2)",
         }}
         onClick={handleProfileClick}
       >
-        <div className="absolute inset-0 bg-gradient-to-tr from-blue-500/20 to-purple-500/20 mix-blend-overlay"></div>
         <Image
-          src="/boys-nft-collection/image.webp"
-          alt="Profile"
+          src="/profile-pic.jpg"
+          alt="Profile picture"
           fill
+          sizes="64px"
           className="object-cover"
-          sizes="(max-width: 768px) 48px, 64px"
         />
+
+        {/* Display POAP badges */}
+        <div className="absolute -top-1 -right-1 bg-purple-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold shadow-md">
+          3
+        </div>
       </div>
 
-      {/* Glass card - modern clean glassmorphism */}
-      <div className="relative h-auto w-full rounded-[20px] overflow-hidden backdrop-blur-[12px] border border-white/20 shadow-lg bg-black/20">
-        {/* Input area - only show in clan spaces */}
-        {isInClanSpace && (
-          <form onSubmit={handleSubmit} className="p-3 md:p-4">
-            <div className="flex gap-2">
-              <input
-                type="text"
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-                placeholder={
-                  clanAccess.canWrite
-                    ? "Type your message..."
-                    : "You can't post in this clan..."
-                }
-                disabled={!clanAccess.canWrite || clanAccess.isLoading}
-                className={`flex-1 ${
-                  !clanAccess.canWrite
-                    ? "bg-white/5 text-white/40"
-                    : "bg-white/10 text-white"
-                } rounded-[10px] px-3 py-2 placeholder-white/60 focus:outline-none focus:ring-1 focus:ring-white/30 border-none text-sm md:text-base font-greed`}
-              />
+      {/* Access Warning Message */}
+      {showPoapMessage && (
+        <div className="absolute left-1/2 top-0 -translate-x-1/2 -translate-y-[calc(100%+16px)] bg-black/90 backdrop-blur-md text-white p-4 rounded-lg shadow-xl border border-white/10 max-w-xs w-full animate-fadeIn">
+          <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-black/90 rotate-45 border-b border-r border-white/10"></div>
+          <div className="flex items-start gap-2">
+            <AlertCircle className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" />
+            <div>
+              <h4 className="font-semibold text-amber-400 mb-1">
+                Access Required
+              </h4>
+              <p className="text-sm text-white/90 mb-2">
+                You need to hold a POAP or collection item from this clan to
+                send messages.
+              </p>
               <button
-                type="submit"
-                disabled={!clanAccess.canWrite || clanAccess.isLoading}
-                className={`${
-                  !clanAccess.canWrite
-                    ? "bg-white/5 text-white/40"
-                    : "bg-white/10 hover:bg-white/20 text-white"
-                } transition-colors rounded-[10px] w-[40px] md:w-[50px] flex items-center justify-center`}
+                onClick={() => setShowPoapMessage(false)}
+                className="text-xs text-white/80 hover:text-white transition-colors flex items-center gap-1 mt-1"
               >
-                {clanAccess.isLoading ? (
-                  <span className="animate-pulse">...</span>
-                ) : !clanAccess.canWrite ? (
-                  <AlertCircle size={18} />
-                ) : (
-                  <Send size={18} />
-                )}
+                <X className="w-3 h-3" /> Close
               </button>
             </div>
+          </div>
+        </div>
+      )}
 
-            {/* Access restriction indicator */}
-            {!clanAccess.canWrite && !clanAccess.isLoading && (
-              <div className="mt-2 text-xs text-amber-400 flex items-center gap-1.5">
-                <AlertCircle size={12} />
-                <span>{clanAccess.reason || "Access restricted"}</span>
-              </div>
-            )}
-          </form>
-        )}
+      {/* Card background with glass effect */}
+      <div
+        className="rounded-xl p-4 backdrop-blur-md border border-white/20 shadow-2xl"
+        style={{
+          background:
+            "linear-gradient(to bottom, rgba(100, 100, 255, 0.05), rgba(100, 100, 255, 0.15))",
+        }}
+      >
+        {/* Chat header */}
+        <div className="flex justify-between items-center">
+          <div className="flex items-center gap-2">
+            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+            <h3 className="text-white font-mono text-xs">
+              {shortAddress} {isInClanSpace ? `· ${clanId}` : ""}
+            </h3>
+          </div>
 
-        {/* Info area */}
-        <div
-          className={`flex justify-between items-center px-3 ${
-            isInClanSpace ? "pb-3" : "py-3"
-          } md:px-4 ${
-            isInClanSpace ? "md:pb-4" : "md:py-4"
-          } text-white/70 text-xs md:text-sm`}
-        >
-          <div className="font-mono">{shortAddress}</div>
-          <div className="flex gap-[5px]">
-            <div className="w-4 h-4 md:w-5 md:h-5 rounded-full border border-white/30 overflow-hidden relative hover:scale-150 hover:z-10 transition-transform cursor-pointer">
-              <Image
-                src="/poaps/mantle-poap-1-2025-logo-1740045878720.webp"
-                alt="POAP 1"
-                fill
-                className="object-cover"
-                sizes="20px"
-              />
-            </div>
-            <div className="w-4 h-4 md:w-5 md:h-5 rounded-full border border-white/30 overflow-hidden relative hover:scale-150 hover:z-10 transition-transform cursor-pointer">
-              <Image
-                src="/poaps/mantle-poap-3-2025-logo-1740046561327.webp"
-                alt="POAP 2"
-                fill
-                className="object-cover"
-                sizes="20px"
-              />
-            </div>
-            <div className="w-4 h-4 md:w-5 md:h-5 rounded-full border border-white/30 overflow-hidden relative hover:scale-150 hover:z-10 transition-transform cursor-pointer">
-              <Image
-                src="/poaps/998d7d74-cdb9-48cd-ad50-1e8476b2622c.webp"
-                alt="POAP 3"
-                fill
-                className="object-cover"
-                sizes="20px"
-              />
-            </div>
-            <div className="w-4 h-4 md:w-5 md:h-5 rounded-full border border-white/30 overflow-hidden relative hover:scale-150 hover:z-10 transition-transform cursor-pointer">
-              <Image
-                src="/poaps/961babb8-aafd-468f-a084-f30da2f18f27.webp"
-                alt="POAP 4"
-                fill
-                className="object-cover"
-                sizes="20px"
-              />
-            </div>
-            <div className="w-4 h-4 md:w-5 md:h-5 rounded-full border border-white/30 overflow-hidden relative hover:scale-150 hover:z-10 transition-transform cursor-pointer">
-              <Image
-                src="/poaps/d3970f57-7607-4380-a01f-7d9088655e10.webp"
-                alt="POAP 5"
-                fill
-                className="object-cover"
-                sizes="20px"
-              />
-            </div>
+          {isInClanSpace && !clanAccess.canWrite && (
+            <span className="px-2 py-0.5 bg-amber-500/80 text-white text-xs rounded-full flex items-center">
+              <AlertCircle className="w-3 h-3 mr-1" />
+              POAP Required
+            </span>
+          )}
+        </div>
+
+        {/* POAP badges */}
+        <div className="flex gap-1 mt-3 justify-end">
+          <div className="w-6 h-6 rounded-full overflow-hidden border border-white/30">
+            <Image
+              src="/poaps/mantle.jpg"
+              alt="Mantle POAP"
+              width={24}
+              height={24}
+              className="object-cover"
+            />
+          </div>
+          <div className="w-6 h-6 rounded-full overflow-hidden border border-white/30">
+            <Image
+              src="/poaps/ba.jpg"
+              alt="BA POAP"
+              width={24}
+              height={24}
+              className="object-cover"
+            />
+          </div>
+          <div className="w-6 h-6 rounded-full overflow-hidden border border-white/30">
+            <Image
+              src="/poaps/zksync.jpg"
+              alt="zkSync POAP"
+              width={24}
+              height={24}
+              className="object-cover"
+            />
           </div>
         </div>
       </div>

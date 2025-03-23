@@ -14,5 +14,22 @@ export interface Clan {
     backgroundImage?: string;
     cardBackgroundImage?: string;
     logoImage?: string;
+    hasEphemeralChat?: boolean;
   };
+}
+
+// Message sender type for ephemeral chat
+export interface MessageSender {
+  address: string;
+  displayName?: string;
+}
+
+// Message type for ephemeral chat
+export interface EphemeralMessage {
+  id: string;
+  text: string;
+  sender: MessageSender;
+  timestamp: Date;
+  expiresAt: Date;
+  paymentAmount: string;
 }

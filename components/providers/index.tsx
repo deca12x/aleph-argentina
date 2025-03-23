@@ -6,6 +6,8 @@ import { createConfig, WagmiProvider } from "@privy-io/wagmi";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { http } from "wagmi";
 import { defineChain } from "viem";
+import { ChatProvider } from "@/context/ChatContext";
+import { EphemeralChatProvider } from "@/context/EphemeralChatContext";
 
 export const zksyncMainnet = defineChain({
   id: 324,
@@ -72,7 +74,11 @@ export function Providers({ children }: { children: React.ReactNode }) {
     >
       <QueryClientProvider client={queryClient}>
         <WagmiProvider config={wagmiConfig}>
-          <NuqsAdapter>{children}</NuqsAdapter>
+          <ChatProvider>
+            <EphemeralChatProvider>
+              <NuqsAdapter>{children}</NuqsAdapter>
+            </EphemeralChatProvider>
+          </ChatProvider>
         </WagmiProvider>
       </QueryClientProvider>
     </PrivyProvider>

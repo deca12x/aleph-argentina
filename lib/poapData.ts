@@ -11,8 +11,8 @@ export const clans: Clan[] = [
       secondaryColor: "#8BC34A",
       backgroundImage: "/zksync/b5462957-8306-46d3-acc8-320bdf21cfc6.webp",
       cardBackgroundImage: "/zksync/ec64396d-34d1-44ac-8de5-8dffff05013a.webp",
-      logoImage: "/icons/white-sun.png"
-    }
+      logoImage: "/icons/white-sun.png",
+    },
   },
   {
     id: "urbe",
@@ -35,8 +35,8 @@ export const clans: Clan[] = [
       secondaryColor: "#03A9F4",
       backgroundImage: "/urbe/_PLG3709.webp",
       cardBackgroundImage: "/urbe/UVmemePowerRangers.webp",
-      logoImage: "/urbe/urbe-logo.jpg"
-    }
+      logoImage: "/urbe/urbe-logo.jpg",
+    },
   },
   {
     id: "zksync",
@@ -48,8 +48,9 @@ export const clans: Clan[] = [
       secondaryColor: "#E040FB",
       backgroundImage: "/zksync/b5462957-8306-46d3-acc8-320bdf21cfc6.webp",
       cardBackgroundImage: "/zksync/ec64396d-34d1-44ac-8de5-8dffff05013a.webp",
-      logoImage: "/zksync/zksync-logo.webp"
-    }
+      logoImage: "/zksync/zksync-logo.webp",
+      hasEphemeralChat: true,
+    },
   },
   {
     id: "mantle",
@@ -70,8 +71,9 @@ export const clans: Clan[] = [
       secondaryColor: "#FF9800",
       backgroundImage: "/mantle1.webp",
       cardBackgroundImage: "/mantle2.webp",
-      logoImage: "/icons/mantle-mnt-logo (1).png"
-    }
+      logoImage: "/icons/mantle-mnt-logo (1).png",
+      hasEphemeralChat: true,
+    },
   },
   {
     id: "aleph",
@@ -83,7 +85,7 @@ export const clans: Clan[] = [
       secondaryColor: "#90A4AE",
       backgroundImage: "/aleph/0f17355c-c5ce-49f0-86b6-bc2109e1ee5d.webp",
       cardBackgroundImage: "/aleph/9d016266-9d4d-4dbd-996f-26d60b0d5712.webp",
-      logoImage: "/icons/aleph-logo.png"
-    }
+      logoImage: "/icons/aleph-logo.png",
+    },
   },
 ];

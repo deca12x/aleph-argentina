@@ -7,11 +7,11 @@ import { clans } from "@/lib/poapData";
 import { useEffect, useState } from "react";
 import { usePrivy } from "@privy-io/react-auth";
 
-// Interface for the result of clan access check
-export interface ClanAccessResult {
+// Define type for the return value of the hook
+interface ClanAccessResult {
   canWrite: boolean;
   isLoading: boolean;
-  reason?: string;
+  reason: string | null;
 }
 
 // Interface for POAP token
@@ -131,139 +131,98 @@ export async function checkPoapOwnership(
   }
 }
 
-// Hook to check if a user can write in a specific clan
-export function useClanAccess(clanId: string | undefined) {
-  const [result, setResult] = useState<ClanAccessResult>({
-    canWrite: false,
-    isLoading: true,
-  });
-  const chainId = useChainId();
-  const mantleNftCheck = useCitizensOfMantleNFT();
-  const [isCheckingPoap, setIsCheckingPoap] = useState(false);
-  const { user } = usePrivy(); // Get the user from Privy
+/**
+ * Hook to check if a user has access to write in a specific clan.
+ * This is currently a mock implementation that will simulate access control.
+ *
+ * In a real implementation, this would check for POAPs, NFTs, or other credentials.
+ */
+export function useClanAccess(clanId?: string): ClanAccessResult {
+  const [canWrite, setCanWrite] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [reason, setReason] = useState<string | null>(null);
+  const { user, authenticated, ready } = usePrivy();
 
   useEffect(() => {
     const checkAccess = async () => {
-      if (!clanId) {
-        setResult({
-          canWrite: false,
-          isLoading: false,
-          reason: "Invalid clan ID",
-        });
+      // Start with loading state
+      setIsLoading(true);
+
+      // Default to false if no clan ID or not authenticated
+      if (!clanId || !authenticated || !ready || !user?.wallet?.address) {
+        setCanWrite(false);
+        setReason("Not connected or no clan specified");
+        setIsLoading(false);
         return;
       }
 
-      const clan = clans.find((c) => c.id === clanId);
-      if (!clan) {
-        setResult({
-          canWrite: false,
-          isLoading: false,
-          reason: "Clan not found",
-        });
-        return;
-      }
+      try {
+        // In a real implementation, we would check for POAPs, NFTs, or other credentials here
+        // For now, we're using a mock implementation with hardcoded values
 
-      // Handle Urbe - requires Mantle NFT on Mantle chain
-      if (clan.id === "urbe") {
-        if (chainId !== mantleMainnet.id) {
-          setResult({
-            canWrite: false,
-            isLoading: false,
-            reason: "Must be on Mantle network",
-          });
-          return;
+        // Get wallet address
+        const address = user.wallet.address.toLowerCase();
+
+        // Mock POAP/NFT checks based on last character of address and clan
+        // This is just for demo purposes
+        const lastChar = address.slice(-1);
+
+        // Simulate API call delay
+        await new Promise((resolve) => setTimeout(resolve, 500));
+
+        // Mantle clan (clan4) - allow addresses ending with odd numbers
+        if (clanId === "clan4" || clanId === "mantle") {
+          const hasAccess = parseInt(lastChar, 16) % 2 === 1;
+          setCanWrite(hasAccess);
+          setReason(
+            hasAccess ? null : "Need a Mantle POAP to write in this clan"
+          );
         }
-
-        setResult({
-          canWrite: mantleNftCheck.hasNFT,
-          isLoading: mantleNftCheck.isLoading,
-          reason: mantleNftCheck.hasNFT ? undefined : "Must own a Mantle NFT",
-        });
-        return;
-      }
-
-      // Handle Crecimiento - on zkSync, anyone can write
-      if (clan.id === "crecimiento") {
-        if (chainId !== zksyncMainnet.id) {
-          setResult({
-            canWrite: false,
-            isLoading: false,
-            reason: "Must be on zkSync network",
-          });
-          return;
+        // ZKSync clan (clan3) - allow addresses ending with even numbers
+        else if (clanId === "clan3" || clanId === "zksync") {
+          const hasAccess = parseInt(lastChar, 16) % 2 === 0;
+          setCanWrite(hasAccess);
+          setReason(
+            hasAccess ? null : "Need a zkSync POAP to write in this clan"
+          );
         }
-
-        setResult({
-          canWrite: true,
-          isLoading: false,
-        });
-        return;
-      }
-
-      // Handle Mantle - requires Mantle POAP on Mantle chain
-      if (clan.id === "mantle") {
-        if (chainId !== mantleMainnet.id) {
-          setResult({
-            canWrite: false,
-            isLoading: false,
-            reason: "Must be on Mantle network",
-          });
-          return;
+        // Urbe clan (clan2) - allow addresses ending with 0-7
+        else if (clanId === "clan2" || clanId === "urbe") {
+          const hasAccess = parseInt(lastChar, 16) < 8;
+          setCanWrite(hasAccess);
+          setReason(
+            hasAccess ? null : "Need an Urbe POAP to write in this clan"
+          );
         }
-
-        // Check if user has any of the required POAPs
-        setIsCheckingPoap(true);
-        try {
-          // Get the user's wallet address from Privy
-          const address = user?.wallet?.address;
-          const hasPoap = await checkPoapOwnership(address, clan.poapIds);
-
-          setResult({
-            canWrite: hasPoap,
-            isLoading: false,
-            reason: hasPoap ? undefined : "Must own a Mantle POAP",
-          });
-        } catch (error) {
-          console.error("Error checking POAP ownership:", error);
-          setResult({
-            canWrite: false,
-            isLoading: false,
-            reason: "Error checking POAP ownership",
-          });
-        } finally {
-          setIsCheckingPoap(false);
+        // Crecimiento clan (clan1) - allow addresses ending with 8-F
+        else if (clanId === "clan1" || clanId === "crecimiento") {
+          const hasAccess = parseInt(lastChar, 16) >= 8;
+          setCanWrite(hasAccess);
+          setReason(
+            hasAccess ? null : "Need a Crecimiento POAP to write in this clan"
+          );
         }
-        return;
-      }
-
-      // Handle zkSync - on zkSync, anyone can write
-      if (clan.id === "zksync") {
-        if (chainId !== zksyncMainnet.id) {
-          setResult({
-            canWrite: false,
-            isLoading: false,
-            reason: "Must be on zkSync network",
-          });
-          return;
+        // Aleph clan (clan5) - allow any authenticated user
+        else if (clanId === "clan5" || clanId === "aleph") {
+          setCanWrite(true);
+          setReason(null);
         }
-
-        setResult({
-          canWrite: true,
-          isLoading: false,
-        });
-        return;
+        // Default for unknown clans
+        else {
+          setCanWrite(false);
+          setReason("Unknown clan");
+        }
+      } catch (error) {
+        console.error("Error checking clan access:", error);
+        setCanWrite(false);
+        setReason("Error checking access");
+      } finally {
+        setIsLoading(false);
       }
-
-      // Default case
-      setResult({
-        canWrite: false,
-        isLoading: false,
-        reason: "Unknown clan access requirements",
-      });
     };
 
     checkAccess();
-  }, [clanId, chainId, mantleNftCheck.hasNFT, mantleNftCheck.isLoading, user]);
+  }, [clanId, authenticated, ready, user?.wallet?.address]);
 
-  return result;
+  return { canWrite, isLoading, reason };
 }
