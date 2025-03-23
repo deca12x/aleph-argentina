@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { usePrivy } from '@privy-io/react-auth'
 import { Send, Clock, X, CheckCircle2, Loader2, Info, AlertCircle } from 'lucide-react'
 import Image from 'next/image'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { useEphemeralChat } from '@/context/EphemeralChatContext'
 import { clans } from '@/lib/poapData'
 import { useSwitchChain, useChainId } from 'wagmi'
@@ -57,6 +57,7 @@ export default function EphemeralChat() {
   const inputRef = useRef<HTMLTextAreaElement>(null)
   const { user, authenticated, login } = usePrivy()
   const pathname = usePathname()
+  const router = useRouter()
   const chainId = useChainId()
   const { switchChain } = useSwitchChain()
   
@@ -555,8 +556,39 @@ export default function EphemeralChat() {
                   {inputMessage.length}/60 characters
                 </div>
 
+                {/* Warning about NFT/POAP requirement when not in the space */}
+                {!pathname.includes('/clans/') && inputMessage.trim() && (
+                  <div 
+                    className="mt-3 p-3 rounded-lg border border-yellow-500/30 bg-yellow-500/10 backdrop-blur-lg"
+                  >
+                    <div className="flex items-start mb-2">
+                      <AlertCircle size={16} className="text-yellow-400 flex-shrink-0 mr-2 mt-0.5" />
+                      <h4 className="text-sm font-medium text-yellow-400">Access Required</h4>
+                    </div>
+                    <p className="text-xs text-white/90 mb-2">
+                      You must be a verified NFT/POAP holder to write messages on this public wall. Enter the clan space to participate.
+                    </p>
+                    <ul className="text-xs text-white/80 list-disc pl-4 mb-2 space-y-1">
+                      <li>Only 16 messages can appear on the wall at once</li>
+                      <li>Higher bids will remain longer on the wall</li>
+                      <li>When wall is full, new bids will replace the lowest paid messages</li>
+                      <li>Set a higher price to ensure your message stays visible</li>
+                    </ul>
+                    <button
+                      className="w-full text-white/90 py-1.5 mt-1 rounded text-xs transition-colors bg-yellow-500/30 hover:bg-yellow-500/40"
+                      onClick={() => {
+                        // Find a default clan to navigate to
+                        const defaultClan = clans[0]?.id || 'mantle';
+                        router.push(`/clans/${defaultClan}`);
+                      }}
+                    >
+                      Enter Clan Space to Post
+                    </button>
+                  </div>
+                )}
+
                 {/* Payment input */}
-                {showPaymentInput && (
+                {showPaymentInput && pathname.includes('/clans/') && (
                   <div 
                     className="mt-3 p-3 rounded-lg border border-white/10"
                     style={{ 
