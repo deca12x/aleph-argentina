@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { clans } from "@/lib/clans";
+import { clans } from "@/lib/poapData";
 import type { Clan } from "@/lib/types";
 import { use, useEffect, useState } from "react";
 import Canvas3D, { SceneType } from "@/components/3d/Canvas";
@@ -15,6 +15,7 @@ import NavButton from "@/components/NavButton";
 import ChatMessages from "@/components/chat/ChatMessages";
 import Link from "next/link";
 import { usePrivy } from "@privy-io/react-auth";
+import { useClanAccess } from "@/lib/clanAccess";
 
 interface ClanPageProps {
   params: Promise<{
@@ -79,6 +80,42 @@ const MANTLE_NETWORK = {
   rpcUrls: ["https://rpc.mantle.xyz"],
   blockExplorerUrls: ["https://explorer.mantle.xyz"],
 };
+
+// Remove the UI debug component and add a logging function instead
+function logClanAccessInfo(clanId: string) {
+  const { user } = usePrivy();
+  const mantleNftCheck = useCitizensOfMantleNFT();
+  const clanAccess = useClanAccess(clanId);
+
+  useEffect(() => {
+    if (process.env.NODE_ENV === "development") {
+      console.log("Clan Access Debug Info:", {
+        clanId,
+        canWrite: clanAccess.canWrite,
+        isLoading: clanAccess.isLoading,
+        reason: clanAccess.reason,
+        userAddress: user?.wallet?.address || "Not connected",
+        nftInfo:
+          clanId === "clan2" || clanId === "clan4"
+            ? {
+                hasNFT: mantleNftCheck?.hasNFT,
+                isLoading: mantleNftCheck?.isLoading,
+                isError: mantleNftCheck?.isError,
+              }
+            : "Not applicable",
+      });
+    }
+  }, [
+    clanId,
+    clanAccess,
+    mantleNftCheck?.hasNFT,
+    mantleNftCheck?.isLoading,
+    mantleNftCheck?.isError,
+    user?.wallet?.address,
+  ]);
+
+  return null;
+}
 
 export default function ClanPage({ params }: ClanPageProps) {
   const router = useRouter();
@@ -520,7 +557,13 @@ export default function ClanPage({ params }: ClanPageProps) {
       {/* Home button */}
       <NavButton href="/" label="Back to Home" position="top-left" />
 
-      {/* Debug Controls - only in development */}
+      {/* Show chat messages for all clans */}
+      <ChatMessages />
+
+      {/* Log debug info to console only */}
+      {process.env.NODE_ENV === "development" && logClanAccessInfo(clan.id)}
+
+      {/* Debug controls - only in development */}
       {process.env.NODE_ENV === "development" && (
         <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex flex-col gap-2 z-50">
           <div className="bg-black/70 p-4 rounded-lg text-white text-sm">
