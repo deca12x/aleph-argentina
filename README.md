@@ -1,36 +1,105 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🌍 Aleph: The First On-Chain AR Social Experience
 
-## Getting Started
+![Aleph Banner](assets/aleph-banner.png)
 
-First, run the development server:
+## Vision
+
+At DevConnect, thousands of builders come together to share ideas—but these moments are fleeting. **What if we could make the invisible visible? What if knowledge, connections, and history could persist in the real world, anchored to physical locations?**
+
+Aleph turns **real-world locations into tradable digital real estate** by putting **AR objects on-chain**. We're creating a **SocialFi experience** where **hidden knowledge, prizes, and digital artifacts** shape a new economy of **on-chain urban storytelling.**
+
+## 🛠 What We Built
+
+Aleph is a **fully functional AR SocialFi tool** that combines augmented reality with blockchain technology:
+
+### Core Features
+
+✅ **Location-Based AR Experiences**
+
+- Scan QR codes at physical locations to discover hidden 3D Easter eggs
+- Experience persistent digital content anchored to real-world coordinates
+- Interact with AR objects that have real on-chain value
+
+✅ **On-Chain AR Real Estate**
+
+- Each physical location becomes a tokenized digital asset (NFT)
+- Limited 3D spaces with provable scarcity and ownership
+- Dynamic price floors create competitive markets for popular locations
+
+✅ **Social Bidding Mechanism**
+
+- Leave messages and 3D content at any location
+- To replace existing content, users must pay more than the previous creator
+- Creates an engaging economic game around content creation
+
+✅ **Decentralized Urban Storytelling**
+
+- Build layered narratives tied to physical places
+- Preserve event memories, knowledge, and cultural artifacts on-chain
+- Create a permanent, accessible record of community interactions
+
+## 💡 Why It Matters
+
+🌐 **A Living Memory of DevConnect** – Messages, memes, and insights left at DevConnect locations **persist beyond the event**, becoming part of a shared on-chain knowledge base.
+
+🎭 **Social & Gamified** – The thrill of **finding hidden Easter eggs** and competing for visibility **creates viral engagement**.
+
+📍 **Location-Tied Digital Ownership** – Just like domains exist on the web, **we create digital ownership of real-world AR spaces**.
+
+## 🔧 Technology Stack
+
+- **Frontend**: React, Next.js, Three.js
+- **AR Technology**: Scaniverse + 8th Wall
+- **Blockchain**: Deployed on Mantle Network and zkSync Era
+- **Smart Contracts**: Solidity (ERC-721 for location NFTs)
+- **Storage**: IPFS for AR content
+- **Authentication**: Connect Kit + Wallet Connect
+
+## 🚀 How It Works
+
+1. **Discover**: Scan QR codes at physical locations to reveal AR content
+2. **Interact**: View, engage with, and share AR objects
+3. **Create**: Leave your own 3D Easter eggs at locations
+4. **Collect**: Own pieces of digital real estate as NFTs
+5. **Trade**: Buy and sell location rights on our marketplace
+
+## 📱 Getting Started
 
 ```bash
+# Clone the repository
+git clone https://github.com/yourusername/aleph.git
+
+# Install dependencies
+cd aleph
+npm install
+
+# Run development server
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🗺️ Roadmap
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- **Phase 1**: DevConnect AR experiences (Current)
+- **Phase 2**: Expansion to major cities worldwide
+- **Phase 3**: Developer API for third-party AR experiences
+- **Phase 4**: Mobile-native application with enhanced AR capabilities
+- **Phase 5**: DAO governance for digital real estate management
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 👥 Team
 
-## Learn More
+Our team combines expertise in AR development, blockchain engineering, and spatial computing to create the future of location-based digital experiences.
 
-To learn more about Next.js, take a look at the following resources:
+## 🔗 Links
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- [Website](https://aleph.xyz)
+- [Demo](https://aleph.xyz/demo)
+- [Documentation](https://docs.aleph.xyz)
+- [Twitter](https://twitter.com/alephAR)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 📝 License
 
-## Deploy on Vercel
+MIT
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Built with ❤️ for DoraHacks Aleph 25'
