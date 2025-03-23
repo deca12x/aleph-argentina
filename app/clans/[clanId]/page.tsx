@@ -74,33 +74,33 @@ const urbeCollections: Collection[] = [
     id: 1,
     title: "City Architecture",
     subtitle: "Urban Design",
-    imageSrc: "", // Empty image
+    imageSrc: "/urbe/ethrome.webp",
     bgColor: "bg-blue-500/20",
-    link: "https://mintle.app/section/art_projects",
+    link: "https://lu.ma/urbe-architecture",
   },
   {
     id: 2,
     title: "Urban Mobility",
     subtitle: "Transportation",
-    imageSrc: "", // Empty image
+    imageSrc: "/urbe/beefy.webp",
     bgColor: "bg-purple-500/20",
-    link: "https://mintle.app/section/art_projects",
+    link: "https://lu.ma/urbe-mobility",
   },
   {
     id: 3,
     title: "City Planning",
     subtitle: "Development",
-    imageSrc: "", // Empty image
+    imageSrc: "/urbe/village.webp",
     bgColor: "bg-green-500/20",
-    link: "https://mintle.app/section/art_projects",
+    link: "https://lu.ma/urbe-planning",
   },
   {
     id: 4,
     title: "Smart Cities",
     subtitle: "Technology",
-    imageSrc: "", // Empty image
+    imageSrc: "/urbe/walrus.webp",
     bgColor: "bg-yellow-500/20",
-    link: "https://mintle.app/section/art_projects",
+    link: "https://lu.ma/urbe-smartcities",
   },
 ];
 
@@ -110,33 +110,33 @@ const zkSyncCollections: Collection[] = [
     id: 1,
     title: "Zero Knowledge",
     subtitle: "Cryptography",
-    imageSrc: "", // Empty image
+    imageSrc: "/zksync/ec64396d-34d1-44ac-8de5-8dffff05013a.webp",
     bgColor: "bg-purple-500/20",
-    link: "https://mintle.app/section/art_projects",
+    link: "https://lu.ma/zksync-zk",
   },
   {
     id: 2,
     title: "Private Transactions",
     subtitle: "Security",
-    imageSrc: "", // Empty image
+    imageSrc: "/zksync/b5462957-8306-46d3-acc8-320bdf21cfc6.webp",
     bgColor: "bg-indigo-500/20",
-    link: "https://mintle.app/section/art_projects",
+    link: "https://lu.ma/zksync-private",
   },
   {
     id: 3,
     title: "Scaling Solutions",
     subtitle: "Performance",
-    imageSrc: "", // Empty image
+    imageSrc: "/zksync/3b579d3b-3027-4f61-82b9-016bb1890385.webp",
     bgColor: "bg-fuchsia-500/20",
-    link: "https://mintle.app/section/art_projects",
+    link: "https://lu.ma/zksync-scaling",
   },
   {
     id: 4,
     title: "ZK Applications",
     subtitle: "Development",
-    imageSrc: "", // Empty image
+    imageSrc: "/zksync/3b4a3784-8016-45ce-8373-5e56a48cb807.webp",
     bgColor: "bg-violet-500/20",
-    link: "https://mintle.app/section/art_projects",
+    link: "https://lu.ma/zksync-apps",
   },
 ];
 
@@ -146,69 +146,69 @@ const crecimientoCollections: Collection[] = [
     id: 1,
     title: "Sustainable Growth",
     subtitle: "Environment",
-    imageSrc: "", // Empty image
+    imageSrc: "/zksync/b5462957-8306-46d3-acc8-320bdf21cfc6.webp",
     bgColor: "bg-green-500/20",
-    link: "https://mintle.app/section/art_projects",
+    link: "https://lu.ma/crecimiento-sustainable",
   },
   {
     id: 2,
-    title: "Regenerative Systems",
-    subtitle: "Ecosystem",
-    imageSrc: "", // Empty image
+    title: "Economic Development",
+    subtitle: "Finance",
+    imageSrc: "/zksync/ec64396d-34d1-44ac-8de5-8dffff05013a.webp",
     bgColor: "bg-emerald-500/20",
-    link: "https://mintle.app/section/art_projects",
+    link: "https://lu.ma/crecimiento-economic",
   },
   {
     id: 3,
-    title: "Green Technology",
-    subtitle: "Innovation",
-    imageSrc: "", // Empty image
-    bgColor: "bg-lime-500/20",
-    link: "https://mintle.app/section/art_projects",
+    title: "Community Growth",
+    subtitle: "Social Impact",
+    imageSrc: "/zksync/3b579d3b-3027-4f61-82b9-016bb1890385.webp",
+    bgColor: "bg-teal-500/20",
+    link: "https://lu.ma/crecimiento-community",
   },
   {
     id: 4,
-    title: "Community Development",
-    subtitle: "Social Impact",
-    imageSrc: "", // Empty image
-    bgColor: "bg-teal-500/20",
-    link: "https://mintle.app/section/art_projects",
+    title: "Regenerative Systems",
+    subtitle: "Ecosystem",
+    imageSrc: "/zksync/3b4a3784-8016-45ce-8373-5e56a48cb807.webp",
+    bgColor: "bg-lime-500/20",
+    link: "https://lu.ma/crecimiento-systems",
   },
 ];
 
-// Aleph clan collections
+// Aleph specific collections
 const alephCollections: Collection[] = [
   {
     id: 1,
-    title: "Data Networks",
-    subtitle: "Infrastructure",
-    imageSrc: "", // Empty image
-    bgColor: "bg-gray-500/20",
-    link: "https://mintle.app/section/art_projects",
+    title: "Data Storage",
+    subtitle: "Decentralized Storage Solutions",
+    imageSrc: "/aleph/0f17355c-c5ce-49f0-86b6-bc2109e1ee5d.webp",
+    bgColor: "bg-blue-500/20",
+    link: "https://lu.ma/aleph-storage",
   },
   {
     id: 2,
-    title: "Distributed Computing",
-    subtitle: "Technology",
-    imageSrc: "", // Empty image
-    bgColor: "bg-slate-500/20",
-    link: "https://mintle.app/section/art_projects",
+    title: "Core Network",
+    subtitle: "Infrastructure",
+    imageSrc: "/aleph/9d016266-9d4d-4dbd-996f-26d60b0d5712.webp",
+    bgColor: "bg-purple-500/20",
+    link: "https://lu.ma/aleph-network",
   },
   {
     id: 3,
-    title: "Decentralized Storage",
-    subtitle: "Data Solutions",
-    imageSrc: "", // Empty image
-    bgColor: "bg-zinc-500/20",
-    link: "https://mintle.app/section/art_projects",
+    title: "Compute Layer",
+    subtitle: "Decentralized Computing",
+    imageSrc: "/aleph/377adb8b-ef95-4620-b657-0abab5cae618.webp",
+    bgColor: "bg-green-500/20",
+    link: "https://lu.ma/aleph-compute",
   },
   {
     id: 4,
-    title: "Node Network",
-    subtitle: "Connectivity",
-    imageSrc: "", // Empty image
-    bgColor: "bg-stone-500/20",
-    link: "https://mintle.app/section/art_projects",
+    title: "Aleph Ecosystem",
+    subtitle: "Developer Platform",
+    imageSrc: "/aleph/a2d2c4c5-4f0c-4269-bf1b-d134fcddaee3.webp",
+    bgColor: "bg-yellow-500/20",
+    link: "https://lu.ma/aleph-ecosystem",
   },
 ];
 
@@ -291,12 +291,18 @@ export default function ClanPage({ params }: ClanPageProps) {
   // Get appropriate collections based on clan
   const getClanCollections = () => {
     switch (clan?.id) {
-      case "mantle": return mantleCollections;
-      case "urbe": return urbeCollections;
-      case "zksync": return zkSyncCollections;
-      case "crecimiento": return crecimientoCollections;
-      case "aleph": return alephCollections;
-      default: return mantleCollections;
+      case "mantle":
+        return mantleCollections;
+      case "urbe":
+        return urbeCollections;
+      case "zksync":
+        return zkSyncCollections;
+      case "crecimiento":
+        return crecimientoCollections;
+      case "aleph":
+        return alephCollections;
+      default:
+        return mantleCollections;
     }
   };
 
@@ -591,7 +597,7 @@ export default function ClanPage({ params }: ClanPageProps) {
                   <p className="text-gray-300 text-sm mb-4">
                     {collection.subtitle}
                   </p>
-                  <span className="inline-block px-4 py-2 bg-white/10 rounded-full text-xs text-white font-medium">
+                  <span className="inline-block px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full text-xs text-white font-medium border border-white/20 group-hover:bg-white/20 transition-all duration-300">
                     Explore
                   </span>
                 </div>
@@ -602,7 +608,7 @@ export default function ClanPage({ params }: ClanPageProps) {
           <div className="mt-24 text-center">
             <button
               onClick={handleEnterSpace}
-              className="group inline-flex items-center px-8 py-4 rounded-full text-white font-bold transition-all duration-300 shadow-lg hover:shadow-xl font-greed"
+              className="group inline-flex items-center px-8 py-4 rounded-full text-white font-bold transition-all duration-300 shadow-lg hover:shadow-xl font-greed relative overflow-hidden"
               style={{ 
                 background: `linear-gradient(to right, ${primaryColor}, ${secondaryColor})`,
                 transition: 'all 0.3s ease'
@@ -614,7 +620,8 @@ export default function ClanPage({ params }: ClanPageProps) {
                 e.currentTarget.style.filter = 'brightness(1)';
               }}
             >
-              <span>Enter Space</span>
+              <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              <span className="text-lg">Enter Space</span>
               <div className="ml-3 w-6 h-6 relative transform group-hover:translate-x-1 transition-transform duration-300">
                 <Image
                   src={logoImage}
