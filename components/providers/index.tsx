@@ -51,9 +51,7 @@ const wagmiConfig = createConfig({
   chains: [zksyncMainnet, mantleMainnet],
   transports: {
     [zksyncMainnet.id]: http(),
-    // [zksyncTestnet.id]: http(),
     [mantleMainnet.id]: http(),
-    // [mantleTestnet.id]: http(),
   },
 });
 
