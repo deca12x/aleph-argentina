@@ -197,10 +197,51 @@ export default function UserProfileCard() {
         >
           <div className="font-mono">{shortAddress}</div>
           <div className="flex gap-[5px]">
-            <div className="w-4 h-4 md:w-5 md:h-5 rounded-full border border-white/30"></div>
-            <div className="w-4 h-4 md:w-5 md:h-5 rounded-full border border-white/30"></div>
-            <div className="w-4 h-4 md:w-5 md:h-5 rounded-full border border-white/30"></div>
-            <div className="w-4 h-4 md:w-5 md:h-5 rounded-full border border-white/30"></div>
+            <div className="w-4 h-4 md:w-5 md:h-5 rounded-full border border-white/30 overflow-hidden relative hover:scale-150 hover:z-10 transition-transform cursor-pointer">
+              <Image
+                src="/poaps/mantle-poap-1-2025-logo-1740045878720.webp"
+                alt="POAP 1"
+                fill
+                className="object-cover"
+                sizes="20px"
+              />
+            </div>
+            <div className="w-4 h-4 md:w-5 md:h-5 rounded-full border border-white/30 overflow-hidden relative hover:scale-150 hover:z-10 transition-transform cursor-pointer">
+              <Image
+                src="/poaps/mantle-poap-3-2025-logo-1740046561327.webp"
+                alt="POAP 2"
+                fill
+                className="object-cover"
+                sizes="20px"
+              />
+            </div>
+            <div className="w-4 h-4 md:w-5 md:h-5 rounded-full border border-white/30 overflow-hidden relative hover:scale-150 hover:z-10 transition-transform cursor-pointer">
+              <Image
+                src="/poaps/998d7d74-cdb9-48cd-ad50-1e8476b2622c.webp"
+                alt="POAP 3"
+                fill
+                className="object-cover"
+                sizes="20px"
+              />
+            </div>
+            <div className="w-4 h-4 md:w-5 md:h-5 rounded-full border border-white/30 overflow-hidden relative hover:scale-150 hover:z-10 transition-transform cursor-pointer">
+              <Image
+                src="/poaps/961babb8-aafd-468f-a084-f30da2f18f27.webp"
+                alt="POAP 4"
+                fill
+                className="object-cover"
+                sizes="20px"
+              />
+            </div>
+            <div className="w-4 h-4 md:w-5 md:h-5 rounded-full border border-white/30 overflow-hidden relative hover:scale-150 hover:z-10 transition-transform cursor-pointer">
+              <Image
+                src="/poaps/d3970f57-7607-4380-a01f-7d9088655e10.webp"
+                alt="POAP 5"
+                fill
+                className="object-cover"
+                sizes="20px"
+              />
+            </div>
           </div>
         </div>
       </div>
