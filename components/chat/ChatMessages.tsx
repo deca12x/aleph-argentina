@@ -112,9 +112,9 @@ export default function ChatMessages() {
     // Get messages for current clan or use default
     const clanBotMessages = botMessages[clanId] || botMessages.default;
     
-    // Initial bot messages (2-3)
+    // Initial bot messages (4-6)
     const addInitialBotMessages = () => {
-      const initialCount = 2 + Math.floor(Math.random() * 2); // 2-3 messages
+      const initialCount = 4 + Math.floor(Math.random() * 3); // 4-6 messages
       const initialMessages: BlockchainMessage[] = [];
       
       for (let i = 0; i < initialCount; i++) {
@@ -147,7 +147,7 @@ export default function ChatMessages() {
         tier: Math.random() > 0.7 ? 'premium' : Math.random() > 0.5 ? 'standard' : 'basic'
       };
       
-      setBlockchainMessages(prev => [newMessage, ...prev.slice(0, 19)]); // Keep max 20 messages
+      setBlockchainMessages(prev => [newMessage, ...prev.slice(0, 15)]); // Keep max 16 messages
     };
     
     // Add initial messages
@@ -174,7 +174,7 @@ export default function ChatMessages() {
         tier: event.detail.tier
       };
       
-      setBlockchainMessages(prev => [newMessage, ...prev.slice(0, 19)]); // Keep max 20 messages
+      setBlockchainMessages(prev => [newMessage, ...prev.slice(0, 15)]); // Keep max 16 messages
     };
     
     window.addEventListener('newBlockchainMessage', handleNewBlockchainMessage as EventListener);
@@ -207,8 +207,11 @@ export default function ChatMessages() {
   };
 
   return (
-    <div className="fixed top-0 left-0 right-0 mx-auto overflow-y-auto z-[5000] px-4 py-2 pointer-events-none h-[60vh] md:h-[50vh]">
-      <div className="max-w-4xl mx-auto">
+    <div className="fixed top-0 left-0 right-0 mx-auto overflow-hidden z-[5000] pointer-events-none h-[70vh] md:h-[60vh] mt-12">
+      {/* Fade out effect at the bottom */}
+      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-black to-transparent z-10"></div>
+      
+      <div className="max-w-5xl mx-auto px-4 py-2 h-full overflow-y-auto">
         <AnimatePresence>
           {blockchainMessages.map((message, idx) => (
             <motion.div
@@ -221,23 +224,23 @@ export default function ChatMessages() {
                 type: 'spring',
                 damping: 15
               }}
-              className="mb-3 pointer-events-none"
+              className="mb-2 pointer-events-none"
               style={{
                 transformOrigin: 'top left'
               }}
             >
               <div 
-                className="inline-block min-w-[250px] max-w-[95%] rounded-[15px] px-4 py-3 text-white shadow-lg border border-white/15"
+                className="inline-block w-[95%] md:w-[85%] lg:w-[500px] rounded-[12px] px-4 py-2 text-white shadow-lg border border-white/15"
                 style={{ 
                   backdropFilter: 'blur(12px)',
                   background: getTierGradient(message.tier),
                   boxShadow: '0 4px 20px rgba(0, 0, 0, 0.15)'
                 }}
               >
-                <div className="flex items-start gap-2">
+                <div className="flex items-center gap-2">
                   <div className="flex-1 break-words">
-                    <p className="text-sm md:text-base font-greed">{message.text}</p>
-                    <div className="flex justify-between items-center mt-2 text-xs text-white/80">
+                    <p className="text-sm font-greed leading-tight">{message.text}</p>
+                    <div className="flex justify-between items-center mt-1 text-xs text-white/80">
                       <span className="font-mono">{formatAddress(message.sender)}</span>
                       <div className="flex items-center gap-2">
                         {message.tier !== 'basic' && (
