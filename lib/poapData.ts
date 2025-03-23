@@ -2,12 +2,12 @@ import { Clan } from "@/lib/types";
 
 export const clans: Clan[] = [
   {
-    id: "clan1",
+    id: "crecimiento",
     name: "Crecimiento",
     poapIds: [],
   },
   {
-    id: "clan2",
+    id: "urbe",
     name: "Urbe",
     poapIds: [
       "185407",
@@ -23,12 +23,12 @@ export const clans: Clan[] = [
     ],
   },
   {
-    id: "clan3",
+    id: "zksync",
     name: "zkSync",
     poapIds: [],
   },
   {
-    id: "clan4",
+    id: "mantle",
     name: "Mantle",
     poapIds: [
       "186431",
@@ -42,7 +42,7 @@ export const clans: Clan[] = [
     ],
   },
   {
-    id: "clan5",
+    id: "aleph",
     name: "Aleph",
     poapIds: [],
   },

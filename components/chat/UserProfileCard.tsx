@@ -2,21 +2,17 @@
 
 import type React from "react";
 import { useState, useEffect, useRef } from "react";
-import { Send, X, AlertCircle, Bug } from "lucide-react";
+import { Send, X, AlertCircle } from "lucide-react";
 import { usePrivy } from "@privy-io/react-auth";
 import { useChat } from "@/context/ChatContext";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
 import { useClanAccess } from "@/lib/clanAccess";
-import { checkPoapOwnership } from "@/lib/clanAccess";
-import { clans } from "@/lib/poapData";
 
 export default function UserProfileCard() {
   const [message, setMessage] = useState("");
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [showPoapMessage, setShowPoapMessage] = useState(false);
-  const [poapDebugResult, setPoapDebugResult] = useState<string | null>(null);
-  const [isTestingPoap, setIsTestingPoap] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
   const { user } = usePrivy();
   const { sendMessage } = useChat();
@@ -87,40 +83,6 @@ export default function UserProfileCard() {
     }
   };
 
-  // Function to test POAP API directly
-  const testPoapApi = async () => {
-    if (!walletAddress) {
-      setPoapDebugResult("No wallet address available.");
-      return;
-    }
-
-    setIsTestingPoap(true);
-    try {
-      // Find the current clan
-      const currentClan = clans.find((c) => c.id === clanIdWithPrefix);
-
-      if (!currentClan) {
-        setPoapDebugResult("Could not determine current clan.");
-        return;
-      }
-
-      const result = await checkPoapOwnership(
-        walletAddress,
-        currentClan.poapIds
-      );
-      setPoapDebugResult(
-        `POAP check result: ${result ? "Has POAP" : "No POAP found"}`
-      );
-    } catch (error) {
-      console.error("Error testing POAP API:", error);
-      setPoapDebugResult(
-        `Error: ${error instanceof Error ? error.message : String(error)}`
-      );
-    } finally {
-      setIsTestingPoap(false);
-    }
-  };
-
   return (
     <div
       id="chatWindow"
@@ -154,21 +116,6 @@ export default function UserProfileCard() {
         </div>
       )}
 
-      {/* POAP Debug Results */}
-      {poapDebugResult && (
-        <div className="absolute left-0 -top-[80px] w-full p-3 rounded-[15px] backdrop-blur-[12px] border border-blue-500/30 shadow-lg bg-black/60 z-50 text-white text-sm">
-          <div className="flex justify-between items-start">
-            <div className="flex-1">{poapDebugResult}</div>
-            <button
-              onClick={() => setPoapDebugResult(null)}
-              className="text-white/70 hover:text-white transition-colors ml-2"
-            >
-              <X size={16} />
-            </button>
-          </div>
-        </div>
-      )}
-
       {/* Profile picture floating to the left */}
       <div
         className="absolute -left-16 md:-left-20 bottom-2 w-12 h-12 md:w-16 md:h-16 rounded-full border-2 border-white/30 overflow-hidden shadow-lg cursor-pointer hover:border-white/50 transition-all duration-300"
@@ -185,6 +132,7 @@ export default function UserProfileCard() {
           alt="Profile"
           fill
           className="object-cover"
+          sizes="(max-width: 768px) 48px, 64px"
         />
       </div>
 
@@ -234,27 +182,6 @@ export default function UserProfileCard() {
               <div className="mt-2 text-xs text-amber-400 flex items-center gap-1.5">
                 <AlertCircle size={12} />
                 <span>{clanAccess.reason || "Access restricted"}</span>
-              </div>
-            )}
-
-            {/* Debug tools - only in development mode */}
-            {process.env.NODE_ENV === "development" && (
-              <div className="mt-2 flex justify-end">
-                <button
-                  type="button"
-                  onClick={testPoapApi}
-                  disabled={isTestingPoap || !walletAddress}
-                  className="text-xs text-blue-400 hover:text-blue-300 flex items-center gap-1 p-1"
-                >
-                  {isTestingPoap ? (
-                    <span className="animate-pulse">Testing...</span>
-                  ) : (
-                    <>
-                      <Bug size={12} />
-                      <span>Test POAP API</span>
-                    </>
-                  )}
-                </button>
               </div>
             )}
           </form>

@@ -129,13 +129,11 @@ export default function ClanPage({ params }: ClanPageProps) {
   const [activeDemo, setActiveDemo] = useState<"matrix" | "reallife">("matrix");
   const [walletConnected, setWalletConnected] = useState(false);
 
-  const clanId = resolvedParams.clanId.startsWith("clan")
-    ? resolvedParams.clanId
-    : `clan${resolvedParams.clanId}`;
+  const clanId = resolvedParams.clanId;
   const clan = clans.find((c) => c.id === clanId);
 
   // Determine if this is the Mantle clan
-  const isMantleClan = clan?.id === "clan4";
+  const isMantleClan = clan?.id === "mantle";
 
   // Only check NFT ownership for Mantle clan
   const nftCheck = isMantleClan ? useCitizensOfMantleNFT() : null;
@@ -180,9 +178,9 @@ export default function ClanPage({ params }: ClanPageProps) {
       const isWalletConnected = await ensureWalletConnected();
       if (!isWalletConnected) return;
 
-      // For Mantle Clan (clan4) and Urbe (clan2) -> use Mantle Mainnet
+      // For Mantle Clan and Urbe -> use Mantle Mainnet
       if (
-        (clan?.id === "clan4" || clan?.id === "clan2") &&
+        (clan?.id === "mantle" || clan?.id === "urbe") &&
         chainId !== mantleMainnet.id
       ) {
         console.log(`Switching to Mantle for clan ${clan?.id}`);
@@ -201,9 +199,9 @@ export default function ClanPage({ params }: ClanPageProps) {
           }
         }
       }
-      // For zkSync Clan (clan3) and Crecimiento (clan1) -> use zkSync Mainnet
+      // For zkSync Clan and Crecimiento -> use zkSync Mainnet
       else if (
-        (clan?.id === "clan3" || clan?.id === "clan1") &&
+        (clan?.id === "zksync" || clan?.id === "crecimiento") &&
         chainId !== zksyncMainnet.id
       ) {
         console.log(`Switching to zkSync for clan ${clan?.id}`);
@@ -562,49 +560,6 @@ export default function ClanPage({ params }: ClanPageProps) {
 
       {/* Log debug info to console only */}
       {process.env.NODE_ENV === "development" && logClanAccessInfo(clan.id)}
-
-      {/* Debug controls - only in development */}
-      {process.env.NODE_ENV === "development" && (
-        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex flex-col gap-2 z-50">
-          <div className="bg-black/70 p-4 rounded-lg text-white text-sm">
-            <div>Chain ID: {chainId || "Not connected"}</div>
-            <div>Authenticated: {authenticated ? "Yes" : "No"}</div>
-          </div>
-          <button
-            onClick={async () => {
-              if (!authenticated) {
-                alert("Please authenticate first");
-                return;
-              }
-
-              await ensureWalletConnected();
-
-              if (switchChain) {
-                const targetChainId =
-                  clan?.id === "clan4" || clan?.id === "clan2"
-                    ? mantleMainnet.id
-                    : zksyncMainnet.id;
-
-                console.log(`Manually switching to chain ID: ${targetChainId}`);
-                try {
-                  await switchChain({ chainId: targetChainId });
-                  console.log("Chain switch initiated successfully");
-                } catch (error) {
-                  console.error("Error during manual chain switch:", error);
-                  alert(
-                    "Failed to switch chain. You may need to switch manually in your wallet."
-                  );
-                }
-              } else {
-                console.log("switchChain function not available");
-              }
-            }}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm"
-          >
-            Debug: Connect & Switch Chain
-          </button>
-        </div>
-      )}
     </div>
   );
 }

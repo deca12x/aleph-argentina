@@ -163,8 +163,8 @@ export function useClanAccess(clanId: string | undefined) {
         return;
       }
 
-      // Handle Urbe (clan2) - requires Mantle NFT on Mantle chain
-      if (clan.id === "clan2") {
+      // Handle Urbe - requires Mantle NFT on Mantle chain
+      if (clan.id === "urbe") {
         if (chainId !== mantleMainnet.id) {
           setResult({
             canWrite: false,
@@ -182,8 +182,8 @@ export function useClanAccess(clanId: string | undefined) {
         return;
       }
 
-      // Handle Crecimiento (clan1) - on zkSync, anyone can write
-      if (clan.id === "clan1") {
+      // Handle Crecimiento - on zkSync, anyone can write
+      if (clan.id === "crecimiento") {
         if (chainId !== zksyncMainnet.id) {
           setResult({
             canWrite: false,
@@ -200,8 +200,8 @@ export function useClanAccess(clanId: string | undefined) {
         return;
       }
 
-      // Handle Mantle (clan4) - requires Mantle POAP on Mantle chain
-      if (clan.id === "clan4") {
+      // Handle Mantle - requires Mantle POAP on Mantle chain
+      if (clan.id === "mantle") {
         if (chainId !== mantleMainnet.id) {
           setResult({
             canWrite: false,
@@ -236,8 +236,8 @@ export function useClanAccess(clanId: string | undefined) {
         return;
       }
 
-      // Handle zkSync (clan3) - on zkSync, anyone can write
-      if (clan.id === "clan3") {
+      // Handle zkSync - on zkSync, anyone can write
+      if (clan.id === "zksync") {
         if (chainId !== zksyncMainnet.id) {
           setResult({
             canWrite: false,
