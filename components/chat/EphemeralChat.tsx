@@ -3,64 +3,137 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { usePrivy } from '@privy-io/react-auth'
-import { Send, Clock, X, CheckCircle2, Loader2 } from 'lucide-react'
+import { Send, Clock, X, CheckCircle2, Loader2, Info, AlertCircle } from 'lucide-react'
 import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { useEphemeralChat } from '@/context/EphemeralChatContext'
 import { clans } from '@/lib/poapData'
+import { useSwitchChain, useChainId } from 'wagmi'
+import { mantleMainnet, zksyncMainnet } from '@/components/providers'
+import { cn } from '@/lib/utils'
+import { useNetwork } from 'wagmi'
+import FormatAddress from '@/lib/formatAddress'
 
-// Define message interface (exported for use in context)
+// Message sender type
+export interface MessageSender {
+  address: string
+  displayName?: string
+}
+
+// Message type
 export interface EphemeralMessage {
   id: string
   text: string
-  sender: {
-    address: string
-    displayName?: string
-  }
+  sender: MessageSender
   timestamp: Date
   expiresAt: Date
-  tier: 'basic' | 'standard' | 'premium'
+  paymentAmount: string
 }
 
 // Transaction status type
 type TransactionStatus = 'idle' | 'pending' | 'confirming' | 'success' | 'error';
 
+// Max wall messages
+const MAX_WALL_MESSAGES = 16;
+
 export default function EphemeralChat() {
-  const { messages, sendMessage, tierDurations, tierPricing } = useEphemeralChat()
+  const { messages, sendMessage, messageDuration } = useEphemeralChat()
   const [inputMessage, setInputMessage] = useState('')
   const [isExpanded, setIsExpanded] = useState(false)
-  const [showTierSelector, setShowTierSelector] = useState(false)
-  const [selectedTier, setSelectedTier] = useState<'basic' | 'standard' | 'premium'>('basic')
+  const [showPaymentInput, setShowPaymentInput] = useState(false)
+  const [paymentAmount, setPaymentAmount] = useState('0')
+  const [minimumPayment, setMinimumPayment] = useState('0')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [txStatus, setTxStatus] = useState<TransactionStatus>('idle')
   const [lastMessageId, setLastMessageId] = useState<string | null>(null)
+  const [wallMessages, setWallMessages] = useState<EphemeralMessage[]>([])
+  const [minPaymentToReplace, setMinPaymentToReplace] = useState<string>('0')
+  const [isWallFull, setIsWallFull] = useState(false)
   const chatContainerRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLTextAreaElement>(null)
   const { user, authenticated, login } = usePrivy()
   const pathname = usePathname()
+  const chainId = useChainId()
+  const { switchChain } = useSwitchChain()
+  const { chain } = useNetwork()
   
   // Extract clan ID from URL
-  const clanIdMatch = pathname?.match(/\/clans\/([^\/]+)/)
-  const clanId = clanIdMatch ? clanIdMatch[1] : 'mantle' // Default to mantle
+  const clanId = pathname.split('/').filter(Boolean)[1] || '1'
   
-  // Find the clan object for the current clan
-  const currentClan = clans.find(clan => clan.id === clanId)
+  // Find the clan with the matching ID
+  const currentClan = clans.find(c => c.id.toString() === clanId) || clans[0]
+  
+  // Get network token symbol
+  const tokenSymbol = chain?.id === 5000 || chain?.id === 5003 ? 'MNT' : 'ETH'
   
   // Get the primary and secondary colors for styling
   const primaryColor = currentClan?.visualProperties?.primaryColor || '#FF5722'
   const secondaryColor = currentClan?.visualProperties?.secondaryColor || '#FF9800'
   
-  // Generate gradient styles for the clan
-  const getGradientStyle = (opacity = '20') => {
-    return `bg-gradient-to-r from-[${primaryColor}]/${opacity} to-[${secondaryColor}]/${opacity}`
-  }
+  // Load and organize wall messages
+  useEffect(() => {
+    // Sort messages by payment amount (highest first)
+    const sortedMessages = [...messages].sort((a, b) => {
+      const amountA = parseFloat(a.paymentAmount) || 0
+      const amountB = parseFloat(b.paymentAmount) || 0
+      return amountB - amountA
+    })
 
-  // Auto-scroll to bottom when new messages arrive
+    // Take the top messages up to MAX_WALL_MESSAGES
+    const topMessages = sortedMessages.slice(0, MAX_WALL_MESSAGES)
+    
+    // Fill remaining slots with empty placeholders
+    const emptySlots = MAX_WALL_MESSAGES - topMessages.length
+    const placeholders = Array(emptySlots > 0 ? emptySlots : 0).fill(null).map((_, i) => ({
+      id: `empty-${i}`,
+      text: '',
+      sender: { address: '' },
+      timestamp: new Date(),
+      expiresAt: new Date(),
+      paymentAmount: '0'
+    }))
+    
+    const wallMessagesList = [...topMessages, ...placeholders]
+    setWallMessages(wallMessagesList)
+    
+    // Update minimum payment required (lowest amount on wall + 0.000001)
+    if (topMessages.length >= MAX_WALL_MESSAGES) {
+      const lowestPayment = parseFloat(topMessages[topMessages.length - 1].paymentAmount) || 0
+      setMinPaymentToReplace((lowestPayment + 0.000001).toFixed(6))
+    } else {
+      setMinPaymentToReplace('0')
+    }
+  }, [messages])
+
+  // Auto scroll to bottom of messages
   useEffect(() => {
     if (chatContainerRef.current) {
       chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight
     }
   }, [messages])
+
+  // Ensure correct network is selected
+  useEffect(() => {
+    if (!switchChain || !authenticated) return
+    
+    const ensureCorrectNetwork = async () => {
+      if (currentClan.id === 'mantle' && chainId !== mantleMainnet.id) {
+        try {
+          await switchChain({ chainId: mantleMainnet.id })
+        } catch (error) {
+          console.error('Error switching to Mantle network:', error)
+        }
+      } else if (currentClan.id === 'zksync' && chainId !== zksyncMainnet.id) {
+        try {
+          await switchChain({ chainId: zksyncMainnet.id })
+        } catch (error) {
+          console.error('Error switching to zkSync network:', error)
+        }
+      }
+    }
+    
+    ensureCorrectNetwork()
+  }, [currentClan.id, chainId, switchChain, authenticated])
 
   // Format address for display
   const formatAddress = (address: string): string => {
@@ -83,28 +156,29 @@ export default function EphemeralChat() {
     return `${diffMins}m`
   }
 
-  // Get style based on message tier and clan colors
-  const getTierStyle = (tier: 'basic' | 'standard' | 'premium') => {
-    switch (tier) {
-      case 'premium':
-        return `bg-gradient-to-r from-[${primaryColor}]/30 to-[${secondaryColor}]/30 border-[${primaryColor}]/40`
-      case 'standard':
-        return `bg-gradient-to-r from-[${primaryColor}]/20 to-[${secondaryColor}]/20 border-[${primaryColor}]/30`
-      default:
-        return 'bg-black/40 border-white/10'
-    }
-  }
-
-  // Handle sending a message
+  // Handle sending a message to the blockchain
   const handleSendMessage = async () => {
     if (!inputMessage.trim() || !authenticated || isSubmitting) return
+    
+    // Validate payment amount
+    const amount = parseFloat(paymentAmount)
+    if (isNaN(amount)) {
+      alert(`Please enter a valid ${tokenSymbol} amount`)
+      return
+    }
+    
+    // Check if the wall is full and the payment is less than the minimum required
+    if (isWallFull && amount < parseFloat(minPaymentToReplace)) {
+      alert(`The wall is full. To replace a message, you need to pay more than ${minPaymentToReplace} ${tokenSymbol}`)
+      return
+    }
 
     setIsSubmitting(true)
     setTxStatus('pending')
     
     try {
-      // First send to ephemeral chat
-      const success = await sendMessage(inputMessage.trim(), selectedTier)
+      // First send to ephemeral chat (local chat)
+      const success = await sendMessage(inputMessage.trim(), paymentAmount)
       
       if (success) {
         // Find the message we just sent
@@ -123,10 +197,41 @@ export default function EphemeralChat() {
               text: inputMessage.trim(),
               sender: user?.wallet?.address || 'unknown',
               displayName: user?.email?.address,
-              clan: clanId,
-              tier: selectedTier
+              clan: currentClan.id,
+              paymentAmount: paymentAmount
             }
           }))
+          
+          // Update local wall messages state optimistically
+          if (wallMessages.length < MAX_WALL_MESSAGES) {
+            // Add new message if wall isn't full
+            setWallMessages(prev => [...prev, {
+              id: msgId,
+              text: inputMessage.trim(),
+              sender: user?.wallet?.address || 'unknown',
+              timestamp: new Date(),
+              paymentAmount: paymentAmount
+            }].sort((a, b) => parseFloat(a.paymentAmount) - parseFloat(b.paymentAmount)))
+          } else {
+            // Replace cheapest message if wall is full and new message pays more
+            if (parseFloat(paymentAmount) > parseFloat(minPaymentToReplace)) {
+              setWallMessages(prev => {
+                const newMessages = [...prev]
+                // Remove cheapest message
+                newMessages.shift()
+                // Add new message
+                newMessages.push({
+                  id: msgId,
+                  text: inputMessage.trim(),
+                  sender: user?.wallet?.address || 'unknown',
+                  timestamp: new Date(),
+                  paymentAmount: paymentAmount
+                })
+                // Sort by payment amount
+                return newMessages.sort((a, b) => parseFloat(a.paymentAmount) - parseFloat(b.paymentAmount))
+              })
+            }
+          }
           
           setTxStatus('success')
           
@@ -138,8 +243,8 @@ export default function EphemeralChat() {
         }, 3000 + Math.random() * 2000)
         
         setInputMessage('')
-        setShowTierSelector(false)
-        setSelectedTier('basic') // Reset to basic tier after sending
+        setShowPaymentInput(false)
+        setPaymentAmount('0')
       } else {
         setTxStatus('error')
         setTimeout(() => setTxStatus('idle'), 4000)
@@ -234,6 +339,33 @@ export default function EphemeralChat() {
         )}
       </AnimatePresence>
 
+      {/* On-chain Wall Status */}
+      <AnimatePresence>
+        {isExpanded && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 10 }}
+            className="absolute -top-16 left-0 right-0 rounded-lg p-3 backdrop-blur-md border"
+            style={{ 
+              background: 'rgba(0, 0, 0, 0.6)',
+              borderColor: 'rgba(255, 255, 255, 0.1)'
+            }}
+          >
+            <div className="flex items-center text-white">
+              <Info size={16} className="mr-2 flex-shrink-0" />
+              <div className="text-xs">
+                {wallMessages.length < MAX_WALL_MESSAGES ? (
+                  <span>Wall has {wallMessages.length}/{MAX_WALL_MESSAGES} messages. You can post for free!</span>
+                ) : (
+                  <span>Wall is full! Min payment to replace: {minPaymentToReplace} {tokenSymbol}</span>
+                )}
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Header */}
       <div 
         style={{ 
@@ -246,7 +378,7 @@ export default function EphemeralChat() {
         <div className="flex items-center">
           <div className="h-2 w-2 rounded-full mr-2" style={{ backgroundColor: primaryColor }}></div>
           <h3 className="text-white font-medium">
-            {currentClan?.name || 'Ephemeral'} Chat
+            {currentClan?.name || 'On-chain'} Wall
           </h3>
         </div>
         <div className="flex items-center space-x-2">
@@ -289,14 +421,14 @@ export default function EphemeralChat() {
                     transition={{ duration: 0.2 }}
                     className={`rounded-lg p-2 border ${message.id === lastMessageId ? 'ring-2' : ''}`}
                     style={{ 
-                      background: message.tier === 'premium' 
+                      background: parseFloat(message.paymentAmount) > 10 
                         ? `linear-gradient(to right, ${primaryColor}25, ${secondaryColor}25)` 
-                        : message.tier === 'standard'
+                        : parseFloat(message.paymentAmount) > 0
                         ? `linear-gradient(to right, ${primaryColor}15, ${secondaryColor}15)`
                         : 'rgba(0, 0, 0, 0.4)',
-                      borderColor: message.tier === 'premium' 
+                      borderColor: parseFloat(message.paymentAmount) > 10
                         ? `${primaryColor}40` 
-                        : message.tier === 'standard'
+                        : parseFloat(message.paymentAmount) > 0
                         ? `${primaryColor}30`
                         : 'rgba(255, 255, 255, 0.1)',
                       ...(message.id === lastMessageId ? { '--ring-color': primaryColor } : {})
@@ -313,15 +445,15 @@ export default function EphemeralChat() {
                         <span
                           className="text-[10px] px-1.5 py-0.5 rounded-full"
                           style={{
-                            background: message.tier === 'premium' 
+                            background: parseFloat(message.paymentAmount) > 10 
                               ? `${primaryColor}90`
-                              : message.tier === 'standard'
+                              : parseFloat(message.paymentAmount) > 0
                               ? `${primaryColor}70`
                               : `${primaryColor}50`,
                             color: 'white'
                           }}
                         >
-                          {message.tier}
+                          {message.paymentAmount} {tokenSymbol}
                         </span>
                       </span>
                       {message.text}
@@ -397,24 +529,29 @@ export default function EphemeralChat() {
                       if (e.key === 'Enter' && !e.shiftKey) {
                         e.preventDefault();
                         if (inputMessage.trim()) {
-                          setShowTierSelector(true);
+                          setShowPaymentInput(true);
                         }
                       }
                     }}
                     disabled={isSubmitting || txStatus === 'confirming'}
-                    maxLength={140} // Limit message length
+                    maxLength={60} // Limit message length to 60 characters as per contract spec
                   />
                   <button
                     className={`ml-2 bg-white/10 ${isSubmitting || txStatus === 'confirming' ? 'opacity-50 cursor-not-allowed' : 'hover:bg-white/20 cursor-pointer'} text-white p-2 rounded-lg transition-colors`}
-                    onClick={() => inputMessage.trim() && setShowTierSelector(true)}
+                    onClick={() => inputMessage.trim() && setShowPaymentInput(true)}
                     disabled={isSubmitting || txStatus === 'confirming'}
                   >
                     <Send size={16} />
                   </button>
                 </div>
 
-                {/* Tier selector */}
-                {showTierSelector && (
+                {/* Character count indicator */}
+                <div className="text-xs text-right mt-1 text-white/50">
+                  {inputMessage.length}/60 characters
+                </div>
+
+                {/* Payment input */}
+                {showPaymentInput && (
                   <div 
                     className="mt-3 p-3 rounded-lg border border-white/10"
                     style={{ 
@@ -422,58 +559,55 @@ export default function EphemeralChat() {
                       borderColor: `${primaryColor}40` 
                     }}
                   >
-                    <h4 className="text-sm text-white mb-2">Select message duration:</h4>
-                    <div className="flex justify-between mb-3">
-                      <button
-                        className={`px-3 py-1 rounded text-xs ${
-                          selectedTier === 'basic' 
-                            ? `text-white` 
-                            : 'bg-white/5 text-white/60 hover:bg-white/10'
-                        }`}
-                        style={selectedTier === 'basic' ? { 
-                          background: `linear-gradient(to right, ${primaryColor}30, ${secondaryColor}30)` 
-                        } : {}}
-                        onClick={() => setSelectedTier('basic')}
-                        disabled={isSubmitting || txStatus === 'confirming'}
-                      >
-                        Basic<br/>({tierDurations.basic} min)
-                      </button>
-                      <button
-                        className={`px-3 py-1 rounded text-xs ${
-                          selectedTier === 'standard' 
-                            ? 'text-white' 
-                            : 'bg-white/5 text-white/60 hover:bg-white/10'
-                        }`}
-                        style={selectedTier === 'standard' ? { 
-                          background: `linear-gradient(to right, ${primaryColor}30, ${secondaryColor}30)` 
-                        } : {}}
-                        onClick={() => setSelectedTier('standard')}
-                        disabled={isSubmitting || txStatus === 'confirming'}
-                      >
-                        Standard<br/>({tierDurations.standard} min)
-                      </button>
-                      <button
-                        className={`px-3 py-1 rounded text-xs ${
-                          selectedTier === 'premium' 
-                            ? 'text-white' 
-                            : 'bg-white/5 text-white/60 hover:bg-white/10'
-                        }`}
-                        style={selectedTier === 'premium' ? { 
-                          background: `linear-gradient(to right, ${primaryColor}30, ${secondaryColor}30)` 
-                        } : {}}
-                        onClick={() => setSelectedTier('premium')}
-                        disabled={isSubmitting || txStatus === 'confirming'}
-                      >
-                        Premium<br/>({tierDurations.premium} min)
-                      </button>
+                    <h4 className="text-sm text-white mb-2">Set payment amount:</h4>
+                    
+                    {/* Payment info */}
+                    <div className="mb-3 text-xs text-white/80 flex items-start">
+                      <AlertCircle size={14} className="mr-1.5 mt-0.5 flex-shrink-0" />
+                      <span>
+                        {wallMessages.length < MAX_WALL_MESSAGES 
+                          ? `The wall has ${wallMessages.length}/${MAX_WALL_MESSAGES} slots available. You can post for free or pay to improve placement.` 
+                          : `The wall is full. To replace a message, you must pay more than ${minPaymentToReplace} ${tokenSymbol}.`}
+                      </span>
                     </div>
-                    <div className="text-xs text-white/60 mb-3">
-                      Cost: {tierPricing[selectedTier]}
+                    
+                    {/* Payment input field */}
+                    <div className="flex items-center mb-3">
+                      <input 
+                        type="number"
+                        value={paymentAmount}
+                        onChange={(e) => setPaymentAmount(e.target.value)}
+                        min="0"
+                        step="0.000001"
+                        className="flex-1 bg-white/10 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:ring-1 focus:ring-white/30"
+                        placeholder={`Enter amount (${tokenSymbol})`}
+                      />
+                      <span className="ml-2 text-white/80 text-sm">{tokenSymbol}</span>
                     </div>
+                    
+                    {/* Message placement info */}
+                    {parseFloat(paymentAmount) > 0 && (
+                      <div className="mb-3 text-xs text-white/70">
+                        {wallMessages.length > 0 ? (
+                          wallMessages.length >= MAX_WALL_MESSAGES ? (
+                            parseFloat(paymentAmount) > parseFloat(minPaymentToReplace) ? (
+                              <span className="text-green-300">Your message will replace the cheapest message in the wall.</span>
+                            ) : (
+                              <span className="text-yellow-300">Not enough to replace any messages. Increase your payment.</span>
+                            )
+                          ) : (
+                            <span>Your message will be added to the wall.</span>
+                          )
+                        ) : (
+                          <span>You'll be the first message on the wall!</span>
+                        )}
+                      </div>
+                    )}
+                    
                     <div className="flex space-x-2">
                       <button
                         className="flex-1 bg-white/10 hover:bg-white/20 text-white py-1 rounded text-xs transition-colors"
-                        onClick={() => setShowTierSelector(false)}
+                        onClick={() => setShowPaymentInput(false)}
                         disabled={isSubmitting || txStatus === 'confirming'}
                       >
                         Cancel
@@ -482,13 +616,17 @@ export default function EphemeralChat() {
                         className="flex-1 text-white py-1 rounded text-xs transition-colors"
                         style={{ 
                           background: `linear-gradient(to right, ${primaryColor}, ${secondaryColor})`,
-                          opacity: isSubmitting || txStatus === 'confirming' ? 0.7 : 1,
-                          cursor: isSubmitting || txStatus === 'confirming' ? 'wait' : 'pointer'
+                          opacity: isSubmitting || txStatus === 'confirming' || (wallMessages.length >= MAX_WALL_MESSAGES && parseFloat(paymentAmount) <= parseFloat(minPaymentToReplace)) ? 0.7 : 1,
+                          cursor: isSubmitting || txStatus === 'confirming' || (wallMessages.length >= MAX_WALL_MESSAGES && parseFloat(paymentAmount) <= parseFloat(minPaymentToReplace)) ? 'not-allowed' : 'pointer'
                         }}
                         onClick={handleSendMessage}
-                        disabled={isSubmitting || txStatus === 'confirming'}
+                        disabled={isSubmitting || txStatus === 'confirming' || (wallMessages.length >= MAX_WALL_MESSAGES && parseFloat(paymentAmount) <= parseFloat(minPaymentToReplace))}
                       >
-                        {isSubmitting ? 'Sending...' : txStatus === 'confirming' ? 'Processing...' : 'Send Message'}
+                        {isSubmitting 
+                          ? 'Sending...' 
+                          : txStatus === 'confirming' 
+                          ? 'Processing...' 
+                          : `Post for ${paymentAmount} ${tokenSymbol}`}
                       </button>
                     </div>
                   </div>
@@ -497,7 +635,7 @@ export default function EphemeralChat() {
             ) : (
               <div className="p-3">
                 <div className="bg-white/10 rounded-lg p-3 text-center">
-                  <p className="text-white text-sm mb-2">Connect your wallet to chat</p>
+                  <p className="text-white text-sm mb-2">Connect your wallet to post messages</p>
                   <button 
                     className="text-white px-4 py-1.5 rounded-lg text-sm"
                     style={{ 
@@ -522,7 +660,9 @@ export default function EphemeralChat() {
         }}
         className="backdrop-blur-xl rounded-b-xl border-b border-l border-r px-3 py-1.5 text-xs text-white/40 text-center"
       >
-        Messages auto-expire based on tier
+        {wallMessages.length >= MAX_WALL_MESSAGES 
+          ? `Pay >${minPaymentToReplace} ${tokenSymbol} to replace messages` 
+          : `${MAX_WALL_MESSAGES - wallMessages.length} free slots available`}
       </div>
     </div>
   )

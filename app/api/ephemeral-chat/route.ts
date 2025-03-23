@@ -13,7 +13,7 @@ interface EphemeralMessage {
   sender: MessageSender
   timestamp: Date
   expiresAt: Date
-  tier: 'basic' | 'standard' | 'premium'
+  paymentAmount: string
 }
 
 let messages: EphemeralMessage[] = []
@@ -21,68 +21,61 @@ let messages: EphemeralMessage[] = []
 // Clean up expired messages every minute
 const cleanupInterval = setInterval(() => {
   const now = new Date()
-  messages = messages.filter(msg => new Date(msg.expiresAt) > now)
+  messages = messages.filter(msg => msg.expiresAt > now)
 }, 60000)
 
 // GET handler to fetch messages
 export async function GET(request: NextRequest) {
   // Clean expired messages before returning
   const now = new Date()
-  messages = messages.filter(msg => new Date(msg.expiresAt) > now)
+  messages = messages.filter(msg => msg.expiresAt > now)
   
-  return NextResponse.json({ 
-    messages,
-    count: messages.length 
+  return NextResponse.json({
+    success: true,
+    count: messages.length,
+    messages: messages
   })
 }
 
 // POST handler to add a new message
 export async function POST(request: NextRequest) {
   try {
-    const { text, sender, tier = 'basic' } = await request.json()
+    const body = await request.json()
+    const { text, sender, paymentAmount, expiryMinutes } = body
     
     // Validate required fields
-    if (!text || !sender?.address) {
+    if (!text || !sender || !sender.address) {
       return NextResponse.json(
-        { error: 'Missing required fields' },
+        { success: false, error: 'Missing required fields' },
         { status: 400 }
       )
     }
     
     // Validate text length
-    if (text.length > 500) {
+    if (text.length > 280) {
       return NextResponse.json(
-        { error: 'Message too long (max 500 characters)' },
+        { success: false, error: 'Message text too long (max 280 characters)' },
         { status: 400 }
       )
     }
     
-    // Calculate expiration time based on tier
-    const tierDurations = {
-      basic: 5, // 5 minutes
-      standard: 30, // 30 minutes
-      premium: 120 // 2 hours
-    }
+    // Create a new message
+    const now = new Date()
+    const expiry = expiryMinutes || 30 // Default to 30 minutes if not specified
     
-    // Create new message
     const newMessage: EphemeralMessage = {
       id: crypto.randomUUID(),
-      text,
+      text: text.trim(),
       sender,
-      timestamp: new Date(),
-      expiresAt: new Date(Date.now() + tierDurations[tier as keyof typeof tierDurations] * 60000),
-      tier: tier as 'basic' | 'standard' | 'premium'
+      timestamp: now,
+      expiresAt: new Date(now.getTime() + expiry * 60000),
+      paymentAmount: paymentAmount || '0'
     }
     
-    // In a real implementation, this would:
-    // 1. Verify payment transaction from wallet
-    // 2. Store message in database or smart contract
-    // 3. Return success or failure
-    
-    // Add to in-memory storage
+    // Add to messages array
     messages.push(newMessage)
     
-    // Return the created message
+    // Return success and the created message
     return NextResponse.json({
       success: true,
       message: newMessage
@@ -90,7 +83,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('Error processing message:', error)
     return NextResponse.json(
-      { error: 'Failed to process message' },
+      { success: false, error: 'Failed to process message' },
       { status: 500 }
     )
   }

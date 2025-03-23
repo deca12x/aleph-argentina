@@ -7,19 +7,11 @@ import { EphemeralMessage } from '@/components/chat/EphemeralChat'
 // Define the context type
 interface EphemeralChatContextType {
   messages: EphemeralMessage[]
-  sendMessage: (text: string, tier: 'basic' | 'standard' | 'premium') => Promise<boolean>
+  sendMessage: (text: string, paymentAmount: string) => Promise<boolean>
   loading: boolean
   error: string | null
-  tierDurations: {
-    basic: number
-    standard: number
-    premium: number
-  }
-  tierPricing: {
-    basic: string
-    standard: string
-    premium: string
-  }
+  // Keep duration calculation for expiry
+  messageDuration: (paymentAmount: string) => number // returns minutes
 }
 
 // Create the context with a default value
@@ -28,16 +20,7 @@ const EphemeralChatContext = createContext<EphemeralChatContextType>({
   sendMessage: async () => false,
   loading: true,
   error: null,
-  tierDurations: {
-    basic: 5,
-    standard: 30,
-    premium: 120
-  },
-  tierPricing: {
-    basic: '1 ALEPH',
-    standard: '5 ALEPH',
-    premium: '20 ALEPH'
-  }
+  messageDuration: () => 30, // default 30 minutes
 })
 
 // Custom hook to use the ephemeral chat context
@@ -50,19 +33,23 @@ export function EphemeralChatProvider({ children }: { children: ReactNode }) {
   const [error, setError] = useState<string | null>(null)
   const { user } = usePrivy()
 
-  // Configuration for message tiers
-  const tierDurations = {
-    basic: 5, // 5 minutes
-    standard: 30, // 30 minutes
-    premium: 120 // 2 hours
-  }
-
-  // Mock pricing for each tier in ALEPH tokens
-  const tierPricing = {
-    basic: '1 ALEPH',
-    standard: '5 ALEPH',
-    premium: '20 ALEPH'
-  }
+  // Calculate message duration based on payment amount
+  // Higher payments = longer duration
+  const messageDuration = (paymentAmount: string): number => {
+    const amount = parseFloat(paymentAmount);
+    
+    if (isNaN(amount) || amount <= 0) {
+      return 30; // Default 30 minutes for free messages
+    } else if (amount < 1) {
+      return 60; // 1 hour for small payments
+    } else if (amount < 5) {
+      return 120; // 2 hours for medium payments
+    } else if (amount < 10) {
+      return 240; // 4 hours for large payments
+    } else {
+      return 1440; // 24 hours for premium payments
+    }
+  };
 
   // Fetch messages from API
   const fetchMessages = async () => {
@@ -134,27 +121,27 @@ export function EphemeralChatProvider({ children }: { children: ReactNode }) {
     const mockMessages: EphemeralMessage[] = [
       {
         id: '1',
-        text: 'Welcome to the ephemeral chat!',
+        text: 'Welcome to the on-chain wall!',
         sender: { address: '0x1234567890abcdef1234567890abcdef12345678', displayName: 'Admin' },
         timestamp: new Date(Date.now() - 60000 * 2),
         expiresAt: new Date(Date.now() + 60000 * 28),
-        tier: 'premium'
+        paymentAmount: '5.0'
       },
       {
         id: '2',
-        text: 'Messages here will disappear after some time.',
+        text: 'You can pay to keep msgs longer',
         sender: { address: '0x2345678901abcdef2345678901abcdef23456789' },
         timestamp: new Date(Date.now() - 60000),
         expiresAt: new Date(Date.now() + 60000 * 4),
-        tier: 'basic'
+        paymentAmount: '0'
       },
       {
         id: '3',
-        text: 'The longer you want your message to stay, the more it costs!',
+        text: 'Premium placement for high bids!',
         sender: { address: '0x3456789012abcdef3456789012abcdef34567890' },
         timestamp: new Date(),
         expiresAt: new Date(Date.now() + 60000 * 29),
-        tier: 'standard'
+        paymentAmount: '2.5'
       }
     ]
 
@@ -189,7 +176,7 @@ export function EphemeralChatProvider({ children }: { children: ReactNode }) {
   }, [messages])
 
   // Function to send a message
-  const sendMessage = async (text: string, tier: 'basic' | 'standard' | 'premium'): Promise<boolean> => {
+  const sendMessage = async (text: string, paymentAmount: string): Promise<boolean> => {
     if (!text.trim() || !user?.wallet?.address) return false
 
     // Sender information
@@ -198,12 +185,20 @@ export function EphemeralChatProvider({ children }: { children: ReactNode }) {
       displayName: user.email?.address || undefined
     }
 
+    // Calculate expiration time based on payment amount
+    const expiryMinutes = messageDuration(paymentAmount);
+
     try {
       // Send message to API
       const response = await fetch('/api/ephemeral-chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text, sender, tier })
+        body: JSON.stringify({ 
+          text, 
+          sender, 
+          paymentAmount,
+          expiryMinutes 
+        })
       })
 
       if (!response.ok) {
@@ -235,8 +230,8 @@ export function EphemeralChatProvider({ children }: { children: ReactNode }) {
         text: text.trim(),
         sender,
         timestamp: new Date(),
-        expiresAt: new Date(Date.now() + tierDurations[tier] * 60000),
-        tier
+        expiresAt: new Date(Date.now() + expiryMinutes * 60000),
+        paymentAmount
       }
       
       // Add to local state
@@ -253,8 +248,7 @@ export function EphemeralChatProvider({ children }: { children: ReactNode }) {
       sendMessage,
       loading,
       error,
-      tierDurations,
-      tierPricing
+      messageDuration
     }}>
       {children}
     </EphemeralChatContext.Provider>
